@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 nsyout <me@nsyout.com> 1770771328 -0600	branch: Created from HEAD
+5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 ff2c0a7d7b1a9da29c8ba3f04eea7f7ccb082c3f nsyout <me@nsyout.com> 1770775961 -0600	commit: cut over to dot command surface with modular libs
+ff2c0a7d7b1a9da29c8ba3f04eea7f7ccb082c3f c3e48928abb7f5e837df7b3ef68d471388d3e392 nsyout <me@nsyout.com> 1770780719 -0600	commit: feat(dot): complete dot CLI cutover with profile-aware manifests and ssh workflows
+c3e48928abb7f5e837df7b3ef68d471388d3e392 b8fc7e1fc2879dfbb694e9194a4fc6a8296c8e67 nsyout <me@nsyout.com> 1770788913 -0600	commit: feat(dotfiles): add profile-aware nvim scaffold, git work include, and project path normalization
+b8fc7e1fc2879dfbb694e9194a4fc6a8296c8e67 3c6d40723719284c09598b58bd8d41b4d2550f03 nsyout <me@nsyout.com> 1770790544 -0600	commit: feat(editor): tune nvim and tmux workflows with git-signed defaults
+3c6d40723719284c09598b58bd8d41b4d2550f03 5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 nsyout <me@nsyout.com> 1770793665 -0600	commit: feat(dot): improve help UX and finalize git-only OpenCode setup
+5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 nsyout <me@nsyout.com> 1770793884 -0600	Branch: renamed refs/heads/dot-cmd to refs/heads/main

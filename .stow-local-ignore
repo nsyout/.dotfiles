@@ -1,0 +1,47 @@
+# Stow ignore patterns
+# Files that shouldn't be symlinked
+
+# Version control
+\.git
+\.gitignore
+\.gitmodules
+
+# Claude
+\.claude
+
+# Documentation
+README.*
+LICENSE.*
+CHANGELOG.*
+TODO.*
+CLAUDE\.md
+\.md$
+
+# macOS
+\.DS_Store
+\.localized
+
+# Editor files
+\~$
+\.swp$
+\.swo$
+\.tmp$
+
+# Build/Install files - use exact directory matches
+^scripts$
+^scripts/
+^packages$
+^packages/
+^Brewfile$
+^Makefile$
+^install
+^bootstrap
+
+# Firefox config (used by setup script, not symlinked)
+\.config/firefox
+
+# Temporary backup directories
+.*-backup-.*
+
+# This file
+\.stow-local-ignore

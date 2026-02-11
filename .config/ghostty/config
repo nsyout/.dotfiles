@@ -1,0 +1,14 @@
+# Ghostty Terminal Configuration - macOS
+
+# Theme and appearance
+theme = Flexoki Dark
+font-size = 20
+font-family = "Berkeley Mono Condensed, IosevkaTerm Nerd Font, monospace"
+mouse-hide-while-typing = true
+window-decoration = true
+split-divider-color = #808080
+
+# macOS specific settings (ignored on Linux)
+macos-option-as-alt = true
+background-blur-radius = 20
+auto-update-channel = tip

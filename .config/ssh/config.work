@@ -1,0 +1,7 @@
+# Work profile SSH config
+# Update this host block for work identity/routing.
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/work_primary
+    IdentitiesOnly yes

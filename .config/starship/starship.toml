@@ -1,0 +1,90 @@
+# Starship Prompt Configuration
+# Fast, minimal prompt with context-aware information
+
+# Minimal, clean format showing: git, languages (contextual), directory
+format = """
+[┌─](#879A39)$username$hostname$directory$git_branch$git_status
+[└─](#879A39)$character"""
+
+[username]
+show_always = false
+format = "[$user@]($style)"
+style_user = "bold #DA702C"
+style_root = "bold #D14D41"
+
+[hostname]
+ssh_only = true
+format = "[$hostname]($style) "
+style = "bold #DA702C"
+
+[character]
+success_symbol = "[❯](#879A39)"
+error_symbol = "[❯](#D14D41)"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "bold #3AA99F"
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch]($style) "
+style = "bold #8B7EC8"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold #D0A215"
+conflicted = "=${count}"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "$${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Context-aware language versions (only show when relevant files exist)
+[nodejs]
+format = "[$symbol($version )]($style)"
+symbol = " "
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )]($style)'
+symbol = " "
+detect_extensions = ["py"]
+detect_files = [".python-version", "Pipfile", "requirements.txt", "pyproject.toml"]
+
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = " "
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum"]
+
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = " "
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml", "Cargo.lock"]
+
+[terraform]
+format = "[$symbol$workspace]($style) "
+symbol = "tf "
+detect_extensions = ["tf", "tfplan", "tfstate"]
+
+[docker_context]
+format = "[$symbol$context]($style) "
+symbol = " "
+only_with_files = false
+
+[aws]
+format = '[$symbol($profile )]($style)'
+symbol = "aws "
+style = "bold #D0A215"
+
+[package]
+format = "[$symbol$version]($style) "
+symbol = " "

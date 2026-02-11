@@ -1,0 +1,5 @@
+# Search hidden files/directories by default
+--hidden
+
+# Skip very large files
+--max-filesize=5M

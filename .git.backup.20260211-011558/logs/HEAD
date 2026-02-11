@@ -1,0 +1,33 @@
+0000000000000000000000000000000000000000 ee5adf70565fb835a733c80b94602482fcec9d10 nsyout <g@nsyout.com> 1769232755 -0600	clone: from https://github.com/nsyout/sys-forbidden.git
+ee5adf70565fb835a733c80b94602482fcec9d10 e38e262b23e1c8978b215cc0bae81f388c67eed9 nsyout <g@nsyout.com> 1769234356 -0600	commit: Improve stow conflict handling and streamline bootstrap flow
+e38e262b23e1c8978b215cc0bae81f388c67eed9 3b1a960608b3dc2d909c011e0d13a359091cfd31 nsyout <g@nsyout.com> 1769234488 -0600	commit: yer
+3b1a960608b3dc2d909c011e0d13a359091cfd31 7524eb22b89c9a6267132056e761f9e4f82163db nsyout <g@nsyout.com> 1769466961 -0600	pull: Fast-forward
+7524eb22b89c9a6267132056e761f9e4f82163db 2f40540eb062a6b59dca93205ea4d691cad728cd nsyout <g@nsyout.com> 1769487284 -0600	commit: Clean up aerospace config, keep only 0-9 workspaces
+2f40540eb062a6b59dca93205ea4d691cad728cd ca73666e75f890ce9fdbb27348a1fd904f1ec62b nsyout <g@nsyout.com> 1769528637 -0600	commit: fixups for backups, lock files, aerospace config
+ca73666e75f890ce9fdbb27348a1fd904f1ec62b e0985093bf5205fd17aea1628f361e32a26f677f nsyout <g@nsyout.com> 1769709702 -0600	pull: Fast-forward
+e0985093bf5205fd17aea1628f361e32a26f677f b1ffce597f412a384c198c7dbd88b2796fede567 nsyout <g@nsyout.com> 1769719570 -0600	commit: aerospace config cleanup + rm lazyvim to stock
+b1ffce597f412a384c198c7dbd88b2796fede567 fbbe03209ce7c3efa130b1c4ea221cd97653778f nsyout <g@nsyout.com> 1769719603 -0600	pull --rebase (start): checkout fbbe03209ce7c3efa130b1c4ea221cd97653778f
+fbbe03209ce7c3efa130b1c4ea221cd97653778f bcc4ea6c054034f4d047973268e668e4dbd1c77e nsyout <g@nsyout.com> 1769719603 -0600	pull --rebase (pick): aerospace config cleanup + rm lazyvim to stock
+bcc4ea6c054034f4d047973268e668e4dbd1c77e bcc4ea6c054034f4d047973268e668e4dbd1c77e nsyout <g@nsyout.com> 1769719603 -0600	pull --rebase (finish): returning to refs/heads/main
+bcc4ea6c054034f4d047973268e668e4dbd1c77e b14d5d2dd11aa32ff45a661fcd54412c8f7a73d1 nsyout <g@nsyout.com> 1769725101 -0600	commit: update command changes, some brewfile foo
+b14d5d2dd11aa32ff45a661fcd54412c8f7a73d1 770868411520dce784017a323fcbab03cdf8ad94 nsyout <g@nsyout.com> 1769765384 -0600	commit: feat: restic error handling improvements, and caffeinate -i
+770868411520dce784017a323fcbab03cdf8ad94 9804bee332df15293c396cc282bf30db4d5a47bd nsyout <g@nsyout.com> 1769791659 -0600	commit: fix: restic backup error handling, add dotstow alias, clean up dead aliases
+9804bee332df15293c396cc282bf30db4d5a47bd bb743ca553bb74e47e791f5fefb042a7251405c2 nsyout <g@nsyout.com> 1769821032 -0600	commit: replacement lsd with exa
+bb743ca553bb74e47e791f5fefb042a7251405c2 edcb7e0c608559d445219ef48f8c0b34096882ed nsyout <g@nsyout.com> 1769830709 -0600	commit: starship hostname
+edcb7e0c608559d445219ef48f8c0b34096882ed b07d5634774b0c42393bd22800c2377923391279 nsyout <me@nsyout.com> 1769840536 -0600	commit: flexoki and fixups for starship
+b07d5634774b0c42393bd22800c2377923391279 9f6dbd2fee96161e09b7c8dc1a875c841a088724 nsyout <me@nsyout.com> 1769889527 -0600	commit: btop themes
+9f6dbd2fee96161e09b7c8dc1a875c841a088724 a731e7052670a088d91e49bf805071c9af8c59a3 nsyout <me@nsyout.com> 1769895959 -0600	commit: nsy fixes
+a731e7052670a088d91e49bf805071c9af8c59a3 aa7beb31cc7445682a2fef498249939e7698712e nsyout <me@nsyout.com> 1770019977 -0600	commit: restic, bootstrap defaults, etc.
+aa7beb31cc7445682a2fef498249939e7698712e 60541dd5773b74b746e908ff0e6611cfc0df9e43 nsyout <me@nsyout.com> 1770174555 -0600	commit: aliases, and claude improvements
+60541dd5773b74b746e908ff0e6611cfc0df9e43 c63a349f465ef3d2f2596c27332564bf96f4cc46 nsyout <me@nsyout.com> 1770174804 -0600	commit: claude alias
+c63a349f465ef3d2f2596c27332564bf96f4cc46 652fe83269cfec79f3dccdd450ab49a2ac0f6073 nsyout <me@nsyout.com> 1770358844 -0600	commit: aliases
+652fe83269cfec79f3dccdd450ab49a2ac0f6073 5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 nsyout <me@nsyout.com> 1770425651 -0600	commit: downloads and apps in dock
+5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 nsyout <me@nsyout.com> 1770771328 -0600	checkout: moving from main to dot-cmd
+5eb28450168dfcedd7d27cf2b7ef3c394f0f15c1 ff2c0a7d7b1a9da29c8ba3f04eea7f7ccb082c3f nsyout <me@nsyout.com> 1770775961 -0600	commit: cut over to dot command surface with modular libs
+ff2c0a7d7b1a9da29c8ba3f04eea7f7ccb082c3f c3e48928abb7f5e837df7b3ef68d471388d3e392 nsyout <me@nsyout.com> 1770780719 -0600	commit: feat(dot): complete dot CLI cutover with profile-aware manifests and ssh workflows
+c3e48928abb7f5e837df7b3ef68d471388d3e392 b8fc7e1fc2879dfbb694e9194a4fc6a8296c8e67 nsyout <me@nsyout.com> 1770788913 -0600	commit: feat(dotfiles): add profile-aware nvim scaffold, git work include, and project path normalization
+b8fc7e1fc2879dfbb694e9194a4fc6a8296c8e67 3c6d40723719284c09598b58bd8d41b4d2550f03 nsyout <me@nsyout.com> 1770790544 -0600	commit: feat(editor): tune nvim and tmux workflows with git-signed defaults
+3c6d40723719284c09598b58bd8d41b4d2550f03 5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 nsyout <me@nsyout.com> 1770793665 -0600	commit: feat(dot): improve help UX and finalize git-only OpenCode setup
+5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 nsyout <me@nsyout.com> 1770793876 -0600	checkout: moving from dot-cmd to dot-cmd
+5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 0000000000000000000000000000000000000000 nsyout <me@nsyout.com> 1770793884 -0600	Branch: renamed refs/heads/dot-cmd to refs/heads/main
+0000000000000000000000000000000000000000 5a1df4cd3ce55789d806dbe81a0cfd34ec8b7d84 nsyout <me@nsyout.com> 1770793884 -0600	Branch: renamed refs/heads/dot-cmd to refs/heads/main

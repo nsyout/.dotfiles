@@ -1,0 +1,8 @@
+[user]
+	# Set your work identity values here.
+	# name = "Your Name"
+	# email = "you@company.com"
+	# This file is activated by includeIf for repos under ~/projects/work/
+
+	# Use a dedicated work signing key pointer when commit signing is enabled.
+	signingKey = ~/.ssh/work_primary.pub

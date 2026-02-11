@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# Wrapper for resticprofile that fetches credentials from Keychain
+# Run setup-restic.sh to populate credentials from 1Password
+#
+
+set -euo pipefail
+
+# Lock file to prevent concurrent runs (persistent location survives reboots)
+LOCKFILE="$HOME/.local/share/resticprofile/backup.lock"
+
+acquire_lock() {
+    if [ -f "$LOCKFILE" ]; then
+        EXISTING_PID=$(cat "$LOCKFILE" 2>/dev/null || echo "")
+        if [ -n "$EXISTING_PID" ] && kill -0 "$EXISTING_PID" 2>/dev/null; then
+            # Verify it's actually a restic/resticprofile process (guards against PID reuse)
+            if ps -p "$EXISTING_PID" -o comm= 2>/dev/null | grep -qE '(restic|backup)'; then
+                echo "Another backup is already running (PID $EXISTING_PID). Exiting." >&2
+                exit 0
+            fi
+        fi
+        # Stale lock file (process dead or PID reused by unrelated process), remove it
+        rm -f "$LOCKFILE"
+    fi
+    echo $$ > "$LOCKFILE"
+    trap 'rm -f "$LOCKFILE"' EXIT
+}
+
+acquire_lock
+
+# Detect machine from hostname and set machine-specific config
+HOSTNAME=$(hostname -s)
+case "$HOSTNAME" in
+    sys-ms*)
+        MACHINE="sys-ms"
+        HEALTHCHECK_URL="https://hc-ping.com/4c695c01-4aee-4ed9-90ec-5d6335733cb4"
+        ;;
+    sys-mbp*)
+        MACHINE="sys-mbp"
+        HEALTHCHECK_URL="https://hc-ping.com/fca63992-e186-46cf-a744-b46c4cd2d5a3"
+        ;;
+    *)
+        echo "Error: Unknown machine '$HOSTNAME'. Expected sys-ms or sys-mbp" >&2
+        exit 1
+        ;;
+esac
+
+# Set repository path based on machine
+export RESTIC_REPOSITORY="s3:s3.us-east-2.amazonaws.com/sudorut-personal-backups/restic-${MACHINE}"
+
+# Fetch credentials from Keychain (stored by setup-restic.sh)
+export RESTIC_PASSWORD=$(security find-generic-password -s "restic-password-${MACHINE}" -a "$USER" -w)
+export AWS_ACCESS_KEY_ID=$(security find-generic-password -s "restic-aws-access-key-${MACHINE}" -a "$USER" -w)
+export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s "restic-aws-secret-key-${MACHINE}" -a "$USER" -w)
+export AWS_DEFAULT_REGION="us-east-2"
+
+# Run resticprofile and capture exit code
+# caffeinate -i prevents idle sleep but allows lid-close sleep (safe for laptops in bags)
+set +e
+caffeinate -i resticprofile -n s3 "$@"
+EXIT_CODE=$?
+set -e
+
+# Ping healthcheck for backup-related operations
+# Exit codes: 0=success, 1=fatal error, 3=partial success (some files unreadable)
+# Treat exit code 3 as success - backup completed, just couldn't read some files
+COMMAND="${1:-}"
+case "$COMMAND" in
+    backup|prune|check|forget)
+        if [[ $EXIT_CODE -eq 0 || $EXIT_CODE -eq 3 ]]; then
+            curl -fsS -m 10 --retry 5 "$HEALTHCHECK_URL" > /dev/null 2>&1 || true
+        else
+            curl -fsS -m 10 --retry 5 "$HEALTHCHECK_URL/fail" > /dev/null 2>&1 || true
+        fi
+        ;;
+esac
+
+exit $EXIT_CODE

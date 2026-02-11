@@ -1,0 +1,6 @@
+# Personal profile SSH config
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/personal_primary
+    IdentitiesOnly yes

@@ -1,0 +1,4 @@
+# Base manifest for profile-aware installs.
+# Keep core package definitions in Brewfile and load them here.
+
+instance_eval(File.read(File.expand_path("Brewfile", __dir__)))

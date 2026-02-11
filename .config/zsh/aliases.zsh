@@ -1,0 +1,207 @@
+#
+# Consolidated Aliases (macOS + cross-platform)
+#
+
+# Utility function for checking command existence
+_exists() {
+  command -v $1 > /dev/null 2>&1
+}
+
+# ------------------------------------------------------------------------------
+# System Utilities
+# ------------------------------------------------------------------------------
+
+# Enable aliases to be sudo'ed
+alias sudo='sudo '
+
+# Clear shortcuts
+alias clr='clear'
+alias q="cd ~ && clear"
+
+# Commands
+alias e='$EDITOR'
+alias x+='chmod +x'
+
+# Show $PATH in readable view
+alias path='echo -e ${PATH//:/\\n}'
+
+# Quick reload of zsh environment
+alias reload="source $ZDOTDIR/.zshrc"
+
+# ------------------------------------------------------------------------------
+# Directory Navigation
+# ------------------------------------------------------------------------------
+
+# Folder shortcuts (system directories)
+[ -d ~/Downloads ] && alias dl='cd ~/Downloads' || [ -d ~/downloads ] && alias dl='cd ~/downloads'
+[ -d ~/Desktop ]   && alias dt='cd ~/Desktop'   || [ -d ~/desktop ]   && alias dt='cd ~/desktop'
+
+# Personal project directories
+[ -d ~/projects ]             && alias pj='cd ~/projects'
+[ -d ~/projects/forks ]       && alias pjf='cd ~/projects/forks'
+[ -d ~/projects/playground ]  && alias pjp='cd ~/projects/playground'
+[ -d ~/projects/repos ]       && alias pjr='cd ~/projects/repos'
+
+# Directory stack shortcuts
+alias d='dirs -v'
+for index in {1..9}; do alias "$index"="cd +${index}"; done; unset index
+
+# ------------------------------------------------------------------------------
+# Dotfiles Management
+# ------------------------------------------------------------------------------
+
+alias dotf='cd ~/.dotfiles'
+alias dotfiles='cd ~/.dotfiles'
+alias dotcd='cd ~/.dotfiles'
+
+# ------------------------------------------------------------------------------
+# File Operations
+# ------------------------------------------------------------------------------
+
+# ls with eza fallback
+if _exists eza; then
+  alias ls >/dev/null 2>&1 && unalias ls
+  alias ls='eza'
+  alias ll='eza -l --git'
+  alias la='eza -la --git'
+  alias lt='eza --tree'
+  alias l='eza -la --git'
+  alias lr='eza -lR --git'
+  alias lh='eza -lah --git'
+  alias lS='eza -lSh --git'
+  alias lt1='eza --tree --level=1'
+  alias lt2='eza --tree --level=2'
+  alias lt3='eza --tree --level=3'
+else
+  alias ls='ls -G'  # macOS color flag
+  alias ll='ls -lG'
+  alias la='ls -laG'
+  alias l='ls -laG'
+  alias lr='ls -lRG'
+  alias lh='ls -lahG'
+  alias lS='ls -lShG'
+fi
+
+# Smart trash management (macOS)
+trash() {
+    for file in "$@"; do
+        if [[ -e "$file" ]]; then
+            osascript -e "tell application \"Finder\" to delete POSIX file \"$(realpath "$file")\""
+        else
+            echo "trash: $file: No such file or directory" >&2
+        fi
+    done
+}
+alias rm='trash'
+
+# Keep original rm available when needed
+alias rmi='command rm -i'  # Interactive rm
+alias rmf='command rm -f'  # Force rm
+
+# cat with bat fallback
+if _exists bat; then
+  alias cat='bat --paging=never'
+fi
+
+# NCDU disk usage analyzer
+if _exists ncdu; then
+  alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
+  alias space='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
+  alias diskusage='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
+fi
+
+# ------------------------------------------------------------------------------
+# macOS Applications
+# ------------------------------------------------------------------------------
+
+alias term='open -a ghostty.app'
+alias st='open -a "Sublime Text" .'
+alias ia='open -a "iA Writer" .'
+alias vsc='code .'
+
+# Open aliases
+alias open='open_command'
+alias o='open'
+alias oo='open .'
+alias finder='open .'
+
+# ------------------------------------------------------------------------------
+# Network & Web
+# ------------------------------------------------------------------------------
+
+# My IP address
+alias myip='ifconfig | sed -En "s/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p"'
+
+# Download utilities
+alias getpage='wget --no-clobber --page-requisites --html-extension --convert-links --no-host-directories'
+alias get="curl -O -L"
+
+# Ping with prettyping fallback
+if _exists prettyping; then
+  alias ping='prettyping'
+fi
+
+# ------------------------------------------------------------------------------
+# Development Tools
+# ------------------------------------------------------------------------------
+
+# Git aliases
+alias git-root='cd $(git rev-parse --show-toplevel)'
+alias gs='git status'
+alias ga='git add'
+alias gp='git push'
+alias gpo='git push origin'
+alias gtd='git tag --delete'
+alias gtdr='git tag --delete origin'
+alias grb='git branch -r'
+alias gplo='git pull origin'
+alias gb='git branch '
+alias gc='git commit'
+alias gd='git diff'
+alias gco='git checkout '
+alias gl='git log'
+alias gr='git remote'
+alias grs='git remote show'
+alias glo='git log --pretty="oneline"'
+alias glol='git log --graph --oneline --decorate'
+
+# Check git status across subdirectories (usage: repostatus [dir])
+repostatus() {
+  local base_dir="${1:-.}"
+  for dir in "$base_dir"/*/; do
+    [ -d "$dir/.git" ] || continue
+    local name="${dir%/}"
+    [ -n "$(git -C "$dir" log @{u}.. 2>/dev/null)" ] && echo "[PUSH] $name"
+    [ -n "$(git -C "$dir" status --porcelain)" ] && echo "[DIRTY] $name"
+  done
+}
+alias grs='repostatus'
+
+# Docker
+alias dcd="docker compose down"
+alias dcu="docker compose up"
+
+# Help/documentation
+if _exists tldr; then
+  alias help="tldr"
+fi
+
+# Claude Code
+alias cc='claude'
+
+# ------------------------------------------------------------------------------
+# Backup (restic)
+# ------------------------------------------------------------------------------
+
+# Wrapper that fetches AWS creds from Keychain before calling resticprofile
+alias restic-backup='~/.config/resticprofile/backup'
+alias restic-backup-logs='echo "~/.local/share/resticprofile/backup.log
+~/.local/share/resticprofile/forget.log
+~/.local/share/resticprofile/prune.log
+~/.local/share/resticprofile/check.log"'
+
+# ------------------------------------------------------------------------------
+# Custom/Personal
+# ------------------------------------------------------------------------------
+
+# noisyoutput.com - see `nsy` function in scripts.zsh

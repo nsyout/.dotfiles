@@ -1,0 +1,138 @@
+# resticprofile configuration
+# https://creativeprojects.github.io/resticprofile/
+
+version = "1"
+
+[global]
+# Use system restic (installed via Homebrew)
+restic-binary = "/opt/homebrew/bin/restic"
+
+# Default profile for this machine
+default-command = "snapshots"
+initialize = false
+
+# ------------------------------------------------------------------------------
+# S3 Backup Profile
+# ------------------------------------------------------------------------------
+[s3]
+# Repository is set dynamically by the restic-backup wrapper via RESTIC_REPOSITORY env var:
+#   sys-ms  -> s3:.../sudorut-personal-backups/restic-sys-ms
+#   sys-mbp -> s3:.../sudorut-personal-backups/restic-sys-mbp
+# Password and AWS credentials are fetched from 1Password by the restic-backup wrapper
+# via Service Account. RESTIC_PASSWORD env var is set by the wrapper.
+
+# Backup configuration
+[s3.backup]
+source = ["/Users/readerr"]
+exclude = [
+    # System junk
+    ".Trash",
+    ".local/share/Trash",
+    ".DS_Store",
+
+    # Large downloads
+    "/Users/readerr/Downloads/*.dmg",
+
+    # Development artifacts
+    "node_modules",
+    ".git/objects",
+    "target",           # Rust build output
+    ".venv",            # Python virtual environments
+    "__pycache__",
+
+    # macOS Library exclusions (ephemeral/regenerable)
+    "Library/Caches",
+    "Library/Logs",
+    "Library/Accounts",
+    "Library/Cookies",
+    "Library/Daemon Containers",
+    "Library/Assistant",
+    "Library/Biome",
+    "Library/DoNotDisturb",
+    "Library/CoreFollowUp",
+    "Library/AppleMediaServices",
+    "Library/ContainerManager",
+    "Library/DuetExpertCenter",
+    "Library/Group Containers",
+
+    # macOS TCC-protected (require Full Disk Access to backup)
+    "Library/Containers",           # App sandboxes - mostly caches
+    "Library/Safari",               # Syncs via iCloud
+    "Library/Mail",                 # TCC-protected
+    "Library/Messages",             # TCC-protected
+    "Pictures/Photos Library.photoslibrary",  # TCC-protected
+    "Library/HomeKit",
+    "Library/IdentityServices",
+    "Library/Metadata/CoreSpotlight",
+    "Library/PersonalizationPortrait",
+    "Library/Suggestions",
+    "Pictures/Photo Booth Library",
+    "Library/Photos",
+
+    # Additional TCC-protected paths (no FDA)
+    "Library/Application Support/AddressBook",
+    "Library/Application Support/CallHistoryDB",
+    "Library/Application Support/CallHistoryTransactions",
+    "Library/Application Support/CloudDocs",
+    "Library/Application Support/DifferentialPrivacy",
+    "Library/Application Support/FaceTime",
+    "Library/Application Support/FileProvider",
+    "Library/Application Support/Knowledge",
+    "Library/Application Support/MobileSync",
+    "Library/Application Support/com.apple.TCC",
+    "Library/Application Support/com.apple.avfoundation/Frecents",
+    "Library/Application Support/com.apple.sharedfilelist",
+    "Library/Autosave Information",
+    "Library/Calendars",
+    "Library/IntelligencePlatform",
+    "Library/Metadata/com.apple.IntelligentSuggestions",
+    "Library/Sharing",
+    "Library/Shortcuts",
+    "Library/StatusKit",
+    "Library/Trial",
+    "Library/Weather",
+    "Library/com.apple.aiml.instrumentation",
+
+    # TCC-protected preference files
+    "Library/Preferences/com.apple.AddressBook.plist",
+    "Library/Preferences/com.apple.MobileSMS*.plist",
+    "Library/Preferences/com.apple.homed*.plist",
+    "Library/Preferences/com.apple.mail-shared.plist",
+    "Library/Preferences/com.apple.messages.pinning.plist",
+
+    # Large re-downloadable content
+    "Library/Application Support/com.apple.wallpaper",  # Aerial screensavers (~500MB+)
+
+    # Applications (reinstallable)
+    "/Applications",
+    "/Users/readerr/Applications",
+    "/Users/readerr/Library/Application Support/Steam",
+]
+# Schedule managed by launchd plist (see ~/.config/resticprofile/launchd/)
+# Run: launchctl load ~/.config/resticprofile/launchd/*.plist
+
+# Limit upload speed (KiB/s)
+limit-upload = 2048
+
+# Retention policy
+[s3.retention]
+keep-daily = 30
+keep-weekly = 8
+keep-monthly = 12
+prune = true
+
+# Forget old snapshots
+[s3.forget]
+keep-daily = 30
+keep-weekly = 8
+keep-monthly = 12
+# Schedule managed by launchd
+
+# Prune repository (reclaim space)
+[s3.prune]
+# Schedule managed by launchd
+
+# Check repository integrity
+[s3.check]
+read-data-subset = "10%"
+# Schedule managed by launchd

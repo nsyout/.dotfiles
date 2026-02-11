@@ -1,0 +1,11 @@
+# Personal overlay packages
+
+tap "creativeprojects/tap"    # For resticprofile
+
+# Backup
+brew "restic"            # Fast, secure backup program
+brew "creativeprojects/tap/resticprofile"  # Configuration manager for restic
+
+# App Store Applications
+mas "Reeder Classic", id: 1529448980  # RSS reader
+mas "Drafts", id: 1435957248          # Quick notes

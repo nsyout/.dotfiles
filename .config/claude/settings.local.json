@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(defaults read:*)",
+      "Bash(git log:*)",
+      "WebFetch(domain:ghostty.org)",
+      "WebSearch"
+    ]
+  },
+  "outputStyle": "default"
+}

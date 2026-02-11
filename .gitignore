@@ -1,0 +1,113 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Editors
+*.swp
+*.swo
+*.swn
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vim/
+
+# Zsh
+*.zwc
+.zcompdump*
+.zsh_history
+.zsh_sessions/
+
+# Secrets and credentials
+*.pem
+*.key
+*.crt
+*.p12
+.env
+.env.*
+secrets/
+credentials/
+
+# Cache and temporary files
+.cache/
+cache/
+*.cache
+tmp/
+temp/
+*.tmp
+*.log
+*.pid
+
+# Compiled/build files
+*.o
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+build/
+dist/
+target/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# Rust
+/target/
+Cargo.lock
+
+# Go
+*.test
+*.prof
+vendor/
+
+# Backup files
+*.bak
+*.backup
+*-backup
+*.old
+
+# Local configuration
+*.local
+.zshrc.local
+.bashrc.local
+
+# Claude Code
+.claude/
+claude-*
+CLAUDE.md
+.config/tmux/plugins/
