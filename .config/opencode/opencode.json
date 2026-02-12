@@ -111,7 +111,7 @@
     "edit": "allow",
     "webfetch": "ask"
   },
-  "theme": "catppuccin-macchiato",
+  "theme": "flexoki",
   "keybinds": {
     "leader": "ctrl+o",
     "messages_half_page_up": "ctrl+u",
