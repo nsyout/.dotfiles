@@ -119,9 +119,7 @@
     "input_delete_to_line_start": "none",
     "input_delete": "delete,shift+delete"
   },
-  "plugin": [
-    "file://{env:HOME}/.config/opencode/plugins/notification.js"
-  ],
+  "plugin": [],
   "mcp": {
     "context7": {
       "type": "remote",

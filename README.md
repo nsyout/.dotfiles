@@ -193,7 +193,7 @@ OpenCode configuration lives in `.config/opencode/`.
 - Plugins:
   - `~/.config/opencode/plugins/*.js|*.ts` are auto-loaded by OpenCode at startup
   - `opencode.json` keeps `"plugin": []` so no npm plugin package is pinned
-  - current local plugin in-tree: `plugins/notification.js` (macOS popup notifications)
+  - no local plugin is currently tracked in this repo
 
 ## noisyoutput.com Content Management
 
