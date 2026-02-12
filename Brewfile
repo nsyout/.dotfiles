@@ -39,6 +39,7 @@ brew "gnu-sed"           # GNU sed
 brew "grep"              # GNU grep
 brew "harper"            # Local grammar checker
 brew "shellcheck"        # Shell script analyzer
+brew "markdownlint-cli2" # Markdown linting
 brew "uv"                # Fast Python package installer
 
 

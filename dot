@@ -3,15 +3,15 @@
 set -e
 
 resolve_script_path() {
-    local source_path="${BASH_SOURCE[0]}"
-    while [[ -L "$source_path" ]]; do
-        local dir
-        dir="$(cd -P "$(dirname "$source_path")" && pwd)"
-        source_path="$(readlink "$source_path")"
-        [[ "$source_path" != /* ]] && source_path="$dir/$source_path"
-    done
+	local source_path="${BASH_SOURCE[0]}"
+	while [[ -L "$source_path" ]]; do
+		local dir
+		dir="$(cd -P "$(dirname "$source_path")" && pwd)"
+		source_path="$(readlink "$source_path")"
+		[[ "$source_path" != /* ]] && source_path="$dir/$source_path"
+	done
 
-    cd -P "$(dirname "$source_path")" && pwd
+	cd -P "$(dirname "$source_path")" && pwd
 }
 
 DOTFILES_DIR="${DOTFILES_DIR:-$(resolve_script_path)}"
@@ -42,9 +42,11 @@ source "$DOTFILES_DIR/scripts/lib/cmd_git.sh"
 source "$DOTFILES_DIR/scripts/lib/cmd_ssh.sh"
 # shellcheck disable=SC1091
 source "$DOTFILES_DIR/scripts/lib/cmd_projects.sh"
+# shellcheck disable=SC1091
+source "$DOTFILES_DIR/scripts/lib/cmd_firefox.sh"
 
 usage() {
-    cat <<'EOF'
+	cat <<'EOF'
 dot - dotfiles command surface
 
 Usage:
@@ -72,6 +74,7 @@ Packages:
 Integrations:
   dot git <setup|status|signing>
   dot ssh <configure|sync-yubikey-keys|status>
+  dot firefox sync [--dry-run] [--yes]
   dot restic <setup|status>
   dot wallpaper set [path]
 
@@ -79,6 +82,10 @@ Utility:
   dot link                         Link dot into ~/.local/bin
   dot unlink                       Remove ~/.local/bin/dot symlink
   dot edit                         Open dotfiles directory in $EDITOR
+  dot qa                           Run local QA checks
+  dot security [--history] [--warn-sast]
+                                   Run local security checks
+  dot sast [--strict]              Run local SAST checks
   dot help [command]               Show command help
 
 Examples:
@@ -95,179 +102,216 @@ EOF
 }
 
 usage_command() {
-    local topic="$1"
-    case "$topic" in
-        ""|-h|--help|help)
-            usage
-            ;;
-        profile)
-            cat <<'EOF'
+	local topic="$1"
+	case "$topic" in
+	"" | -h | --help | help)
+		usage
+		;;
+	profile)
+		cat <<'EOF'
 Usage: dot profile set <base|personal|work> | get | show
 EOF
-            ;;
-        stow)
-            cmd_stow --help
-            ;;
-        packages)
-            cmd_packages --help
-            ;;
-        retry-failed)
-            cmd_retry_failed --help
-            ;;
-        bootstrap)
-            dot_cmd_bootstrap --help
-            ;;
-        init)
-            dot_cmd_init --help
-            ;;
-        update)
-            dot_cmd_update --help
-            ;;
-        doctor)
-            dot_cmd_doctor --help
-            ;;
-        git)
-            dot_cmd_git --help
-            ;;
-        ssh)
-            dot_cmd_ssh --help
-            ;;
-        projects)
-            dot_cmd_projects --help
-            ;;
-        restic)
-            dot_cmd_restic --help
-            ;;
-        wallpaper)
-            dot_cmd_wallpaper --help
-            ;;
-        link|unlink|edit)
-            cat <<'EOF'
-Usage: dot link | unlink | edit
+		;;
+	stow)
+		cmd_stow --help
+		;;
+	packages)
+		cmd_packages --help
+		;;
+	retry-failed)
+		cmd_retry_failed --help
+		;;
+	bootstrap)
+		dot_cmd_bootstrap --help
+		;;
+	init)
+		dot_cmd_init --help
+		;;
+	update)
+		dot_cmd_update --help
+		;;
+	doctor)
+		dot_cmd_doctor --help
+		;;
+	git)
+		dot_cmd_git --help
+		;;
+	ssh)
+		dot_cmd_ssh --help
+		;;
+	firefox)
+		dot_cmd_firefox --help
+		;;
+	projects)
+		dot_cmd_projects --help
+		;;
+	restic)
+		dot_cmd_restic --help
+		;;
+	wallpaper)
+		dot_cmd_wallpaper --help
+		;;
+	qa)
+		cat <<'EOF'
+Usage: dot qa
+
+Runs: ./scripts/local-qa.sh
 EOF
-            ;;
-        *)
-            error "Unknown help topic: $topic"
-            return 1
-            ;;
-    esac
+		;;
+	security)
+		cat <<'EOF'
+Usage: dot security [--history] [--warn-sast]
+
+Runs: ./scripts/local-security.sh
+EOF
+		;;
+	sast)
+		cat <<'EOF'
+Usage: dot sast [--strict]
+
+Runs: ./scripts/local-sast.sh
+EOF
+		;;
+	link | unlink | edit)
+		cat <<'EOF'
+Usage: dot link | unlink | edit | qa | security | sast
+EOF
+		;;
+	*)
+		error "Unknown help topic: $topic"
+		return 1
+		;;
+	esac
 }
 
 resolve_profile_arg() {
-    local requested_profile="$1"
-    if [[ -z "$requested_profile" ]]; then
-        dot_profile_get
-        return 0
-    fi
+	local requested_profile="$1"
+	if [[ -z "$requested_profile" ]]; then
+		dot_profile_get
+		return 0
+	fi
 
-    if ! dot_profile_is_valid "$requested_profile"; then
-        error "Invalid profile '$requested_profile'. Use: base, personal, work"
-        return 1
-    fi
+	if ! dot_profile_is_valid "$requested_profile"; then
+		error "Invalid profile '$requested_profile'. Use: base, personal, work"
+		return 1
+	fi
 
-    printf "%s\n" "$requested_profile"
+	printf "%s\n" "$requested_profile"
 }
 
 link_dot() {
-    local target="$HOME/.local/bin/dot"
-    mkdir -p "$(dirname "$target")"
-    ln -sfn "$DOTFILES_DIR/dot" "$target"
-    info "Linked dot to $target"
+	local target="$HOME/.local/bin/dot"
+	mkdir -p "$(dirname "$target")"
+	ln -sfn "$DOTFILES_DIR/dot" "$target"
+	info "Linked dot to $target"
 }
 
 unlink_dot() {
-    local target="$HOME/.local/bin/dot"
-    if [[ -L "$target" ]]; then
-        rm "$target"
-        info "Removed $target"
-        return 0
-    fi
+	local target="$HOME/.local/bin/dot"
+	if [[ -L "$target" ]]; then
+		rm "$target"
+		info "Removed $target"
+		return 0
+	fi
 
-    warn "No dot symlink at $target"
+	warn "No dot symlink at $target"
 }
 
 edit_dotfiles() {
-    local editor="${EDITOR:-vi}"
-    "$editor" "$DOTFILES_DIR"
+	local editor="${EDITOR:-vi}"
+	"$editor" "$DOTFILES_DIR"
+}
+
+run_local_script() {
+	local script_rel="$1"
+	shift || true
+
+	local script_path="$DOTFILES_DIR/$script_rel"
+	if [[ ! -f "$script_path" ]]; then
+		error "Script not found: $script_rel"
+		return 1
+	fi
+
+	bash "$script_path" "$@"
 }
 
 not_implemented() {
-    warn "Command '$1' is not implemented yet"
-    warn "See PLAN.md migration phases for rollout order"
-    return 1
+	warn "Command '$1' is not implemented yet"
+	warn "See PLAN.md migration phases for rollout order"
+	return 1
 }
 
 cmd_profile() {
-    local action="${1:-}"
-    case "$action" in
-        set)
-            shift
-            dot_profile_set "${1:-}"
-            ;;
-        get)
-            dot_profile_get
-            ;;
-        show)
-            dot_profile_show
-            ;;
-        *)
-            error "Usage: dot profile set <base|personal|work> | get | show"
-            return 1
-            ;;
-    esac
+	local action="${1:-}"
+	case "$action" in
+	set)
+		shift
+		dot_profile_set "${1:-}"
+		;;
+	get)
+		dot_profile_get
+		;;
+	show)
+		dot_profile_show
+		;;
+	*)
+		error "Usage: dot profile set <base|personal|work> | get | show"
+		return 1
+		;;
+	esac
 }
 
 cmd_stow() {
-    local requested_profile=""
-    local dry_run=false
+	local requested_profile=""
+	local dry_run=false
 
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --profile)
-                shift
-                requested_profile="${1:-}"
-                ;;
-            --dry-run)
-                dry_run=true
-                ;;
-            -h|--help)
-                cat <<'EOF'
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--profile)
+			shift
+			requested_profile="${1:-}"
+			;;
+		--dry-run)
+			dry_run=true
+			;;
+		-h | --help)
+			cat <<'EOF'
 Usage: dot stow [options]
 
 Options:
   --profile <base|personal|work>
   --dry-run
 EOF
-                return 0
-                ;;
-            *)
-                error "Unknown option for dot stow: $1"
-                return 1
-                ;;
-        esac
-        shift
-    done
+			return 0
+			;;
+		*)
+			error "Unknown option for dot stow: $1"
+			return 1
+			;;
+		esac
+		shift
+	done
 
-    local profile
-    profile="$(resolve_profile_arg "$requested_profile")" || return 1
+	local profile
+	profile="$(resolve_profile_arg "$requested_profile")" || return 1
 
-    if [[ "$dry_run" == "true" ]]; then
-        step "Dry run"
-        info "Would deploy stow packages for profile '$profile':"
-        dot_stow_profile_packages "$profile" | while IFS= read -r pkg; do
-            info "  - $pkg"
-        done
-        return 0
-    fi
+	if [[ "$dry_run" == "true" ]]; then
+		step "Dry run"
+		info "Would deploy stow packages for profile '$profile':"
+		dot_stow_profile_packages "$profile" | while IFS= read -r pkg; do
+			info "  - $pkg"
+		done
+		return 0
+	fi
 
-    dot_stow_apply "$profile"
+	dot_stow_apply "$profile"
 }
 
 cmd_packages() {
-    local action="${1:-}"
+	local action="${1:-}"
 
-    if [[ "$action" == "-h" || "$action" == "--help" || "$action" == "help" ]]; then
-        cat <<'EOF'
+	if [[ "$action" == "-h" || "$action" == "--help" || "$action" == "help" ]]; then
+		cat <<'EOF'
 Usage: dot packages <sync|check|cleanup|list|update|add|remove> [options]
 
 Options:
@@ -281,33 +325,33 @@ Examples:
   dot packages add ghostty@tip --cask --profile work
   dot packages remove spotify --cask --profile personal
 EOF
-        return 0
-    fi
+		return 0
+	fi
 
-    shift || true
+	shift || true
 
-    local requested_profile=""
-    local dry_run=false
-    local entry_type="brew"
-    local package_name=""
+	local requested_profile=""
+	local dry_run=false
+	local entry_type="brew"
+	local package_name=""
 
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --profile)
-                shift
-                requested_profile="${1:-}"
-                ;;
-            --dry-run)
-                dry_run=true
-                ;;
-            --cask)
-                entry_type="cask"
-                ;;
-            --brew)
-                entry_type="brew"
-                ;;
-            -h|--help)
-                cat <<'EOF'
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--profile)
+			shift
+			requested_profile="${1:-}"
+			;;
+		--dry-run)
+			dry_run=true
+			;;
+		--cask)
+			entry_type="cask"
+			;;
+		--brew)
+			entry_type="brew"
+			;;
+		-h | --help)
+			cat <<'EOF'
 Usage: dot packages <sync|check|cleanup|list|update|add|remove> [options]
 
 Options:
@@ -321,190 +365,208 @@ Examples:
   dot packages add ghostty@tip --cask --profile work
   dot packages remove spotify --cask --profile personal
 EOF
-                return 0
-                ;;
-            *)
-                if [[ -z "$package_name" ]]; then
-                    package_name="$1"
-                else
-                    error "Unknown option for dot packages: $1"
-                    return 1
-                fi
-                ;;
-        esac
-        shift
-    done
+			return 0
+			;;
+		*)
+			if [[ -z "$package_name" ]]; then
+				package_name="$1"
+			else
+				error "Unknown option for dot packages: $1"
+				return 1
+			fi
+			;;
+		esac
+		shift
+	done
 
-    if [[ -z "$action" ]]; then
-        error "Usage: dot packages <sync|check|cleanup|list|update|add|remove> [--profile ...]"
-        return 1
-    fi
+	if [[ -z "$action" ]]; then
+		error "Usage: dot packages <sync|check|cleanup|list|update|add|remove> [--profile ...]"
+		return 1
+	fi
 
-    local profile
-    profile="$(resolve_profile_arg "$requested_profile")" || return 1
+	local profile
+	profile="$(resolve_profile_arg "$requested_profile")" || return 1
 
-    if [[ "$dry_run" == "true" ]]; then
-        step "Dry run"
-        info "Would run 'packages $action' for profile '$profile'"
-        dot_packages_manifest_files "$profile" | while IFS= read -r manifest; do
-            info "  - $(basename "$manifest")"
-        done
-        if [[ "$action" == "add" || "$action" == "remove" ]]; then
-            info "Package: ${package_name:-<missing>} (${entry_type})"
-        fi
-        return 0
-    fi
+	if [[ "$dry_run" == "true" ]]; then
+		step "Dry run"
+		info "Would run 'packages $action' for profile '$profile'"
+		dot_packages_manifest_files "$profile" | while IFS= read -r manifest; do
+			info "  - $(basename "$manifest")"
+		done
+		if [[ "$action" == "add" || "$action" == "remove" ]]; then
+			info "Package: ${package_name:-<missing>} (${entry_type})"
+		fi
+		return 0
+	fi
 
-    case "$action" in
-        sync)
-            dot_packages_sync "$profile"
-            ;;
-        check)
-            dot_packages_check "$profile"
-            ;;
-        cleanup)
-            dot_packages_cleanup "$profile"
-            ;;
-        list)
-            dot_packages_list_entries "$profile"
-            ;;
-        update)
-            dot_packages_update "$profile"
-            ;;
-        add)
-            if [[ -z "$package_name" ]]; then
-                error "Usage: dot packages add <name> [--cask|--brew] [--profile ...]"
-                return 1
-            fi
-            dot_packages_add_entry "$profile" "$package_name" "$entry_type"
-            ;;
-        remove)
-            if [[ -z "$package_name" ]]; then
-                error "Usage: dot packages remove <name> [--cask|--brew] [--profile ...]"
-                return 1
-            fi
-            dot_packages_remove_entry "$profile" "$package_name" "$entry_type"
-            ;;
-        *)
-            error "Unknown packages action: $action"
-            return 1
-            ;;
-    esac
+	case "$action" in
+	sync)
+		dot_packages_sync "$profile"
+		;;
+	check)
+		dot_packages_check "$profile"
+		;;
+	cleanup)
+		dot_packages_cleanup "$profile"
+		;;
+	list)
+		dot_packages_list_entries "$profile"
+		;;
+	update)
+		dot_packages_update "$profile"
+		;;
+	add)
+		if [[ -z "$package_name" ]]; then
+			error "Usage: dot packages add <name> [--cask|--brew] [--profile ...]"
+			return 1
+		fi
+		dot_packages_add_entry "$profile" "$package_name" "$entry_type"
+		;;
+	remove)
+		if [[ -z "$package_name" ]]; then
+			error "Usage: dot packages remove <name> [--cask|--brew] [--profile ...]"
+			return 1
+		fi
+		dot_packages_remove_entry "$profile" "$package_name" "$entry_type"
+		;;
+	*)
+		error "Unknown packages action: $action"
+		return 1
+		;;
+	esac
 }
 
 cmd_retry_failed() {
-    local requested_profile=""
-    local dry_run=false
+	local requested_profile=""
+	local dry_run=false
 
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --profile)
-                shift
-                requested_profile="${1:-}"
-                ;;
-            --dry-run)
-                dry_run=true
-                ;;
-            -h|--help)
-                cat <<'EOF'
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--profile)
+			shift
+			requested_profile="${1:-}"
+			;;
+		--dry-run)
+			dry_run=true
+			;;
+		-h | --help)
+			cat <<'EOF'
 Usage: dot retry-failed [--profile <base|personal|work>] [--dry-run]
 EOF
-                return 0
-                ;;
-            *)
-                error "Unknown option for dot retry-failed: $1"
-                return 1
-                ;;
-        esac
-        shift
-    done
+			return 0
+			;;
+		*)
+			error "Unknown option for dot retry-failed: $1"
+			return 1
+			;;
+		esac
+		shift
+	done
 
-    local profile
-    profile="$(resolve_profile_arg "$requested_profile")" || return 1
+	local profile
+	profile="$(resolve_profile_arg "$requested_profile")" || return 1
 
-    if [[ "$dry_run" == "true" ]]; then
-        step "Dry run"
-        info "Would retry failed package manifests for profile '$profile'"
-        return 0
-    fi
+	if [[ "$dry_run" == "true" ]]; then
+		step "Dry run"
+		info "Would retry failed package manifests for profile '$profile'"
+		return 0
+	fi
 
-    dot_packages_retry_failed "$profile"
+	dot_packages_retry_failed "$profile"
 }
 
 main() {
-    local command="${1:-help}"
-    case "$command" in
-        -h|--help|help)
-            shift
-            usage_command "${1:-}"
-            ;;
-        profile)
-            shift
-            cmd_profile "$@"
-            ;;
-        link)
-            link_dot
-            ;;
-        unlink)
-            unlink_dot
-            ;;
-        edit)
-            edit_dotfiles
-            ;;
-        bootstrap)
-            shift
-            dot_cmd_bootstrap "$@"
-            ;;
-        init)
-            shift
-            dot_cmd_init "$@"
-            ;;
-        update)
-            shift
-            dot_cmd_update "$@"
-            ;;
-        stow)
-            shift
-            cmd_stow "$@"
-            ;;
-        packages)
-            shift
-            cmd_packages "$@"
-            ;;
-        retry-failed)
-            shift
-            cmd_retry_failed "$@"
-            ;;
-        doctor)
-            shift
-            dot_cmd_doctor "$@"
-            ;;
-        restic)
-            shift
-            dot_cmd_restic "$@"
-            ;;
-        wallpaper)
-            shift
-            dot_cmd_wallpaper "$@"
-            ;;
-        git)
-            shift
-            dot_cmd_git "$@"
-            ;;
-        ssh)
-            shift
-            dot_cmd_ssh "$@"
-            ;;
-        projects)
-            shift
-            dot_cmd_projects "$@"
-            ;;
-        *)
-            usage
-            error "Unknown command: $command"
-            exit 1
-            ;;
-    esac
+	local command="${1:-help}"
+	case "$command" in
+	-h | --help | help)
+		if [[ $# -gt 0 ]]; then
+			shift
+		fi
+		usage_command "${1:-}"
+		;;
+	profile)
+		shift
+		cmd_profile "$@"
+		;;
+	link)
+		link_dot
+		;;
+	unlink)
+		unlink_dot
+		;;
+	edit)
+		edit_dotfiles
+		;;
+	qa)
+		shift
+		run_local_script "scripts/local-qa.sh" "$@"
+		;;
+	security)
+		shift
+		run_local_script "scripts/local-security.sh" "$@"
+		;;
+	sast)
+		shift
+		run_local_script "scripts/local-sast.sh" "$@"
+		;;
+	bootstrap)
+		shift
+		dot_cmd_bootstrap "$@"
+		;;
+	init)
+		shift
+		dot_cmd_init "$@"
+		;;
+	update)
+		shift
+		dot_cmd_update "$@"
+		;;
+	stow)
+		shift
+		cmd_stow "$@"
+		;;
+	packages)
+		shift
+		cmd_packages "$@"
+		;;
+	retry-failed)
+		shift
+		cmd_retry_failed "$@"
+		;;
+	doctor)
+		shift
+		dot_cmd_doctor "$@"
+		;;
+	restic)
+		shift
+		dot_cmd_restic "$@"
+		;;
+	wallpaper)
+		shift
+		dot_cmd_wallpaper "$@"
+		;;
+	git)
+		shift
+		dot_cmd_git "$@"
+		;;
+	ssh)
+		shift
+		dot_cmd_ssh "$@"
+		;;
+	firefox)
+		shift
+		dot_cmd_firefox "$@"
+		;;
+	projects)
+		shift
+		dot_cmd_projects "$@"
+		;;
+	*)
+		usage
+		error "Unknown command: $command"
+		exit 1
+		;;
+	esac
 }
 
 main "$@"

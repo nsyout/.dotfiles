@@ -20,7 +20,7 @@ single-command workflow and modular dotfiles management approach.
 
 ## Structure
 
-```
+```text
 dotfiles/
 ├── dot                   # Primary CLI entrypoint
 ├── .config/              # All configuration files
@@ -116,6 +116,7 @@ cd ~/.dotfiles
 Bootstrap will prompt you to run full setup at the end, or you can run `./dot init` later.
 
 **Bootstrap includes:**
+
 - macOS system preferences (Finder, Dock, Trackpad, Keyboard, etc.)
 - Xcode Command Line Tools
 - Hostname configuration
@@ -146,6 +147,7 @@ This applies to both:
 - package sync (`Brewfile.base` + profile overlay)
 
 The setup command will:
+
 1. Install Homebrew if not present
 2. Install required tools (git, stow, starship, etc.)
 3. Clean up broken symlinks
@@ -208,6 +210,7 @@ nsy page         # Skip type selection, go straight to page
 ```
 
 **Workflow:**
+
 1. Select content type (note, writing, page)
 2. Enter slug/name
 3. Hugo creates the file with `draft: true`
@@ -227,6 +230,7 @@ nsy pub          # Shorthand
 ```
 
 **Workflow:**
+
 1. Shows list of drafts (fzf selection with preview)
 2. Option to preview locally first
 3. Flips `draft: false` in frontmatter
@@ -255,7 +259,7 @@ Automated backups to S3 using restic and resticprofile, with credentials securel
 
 ### Architecture
 
-```
+```text
 macOS Keychain (encrypted)
     └── 1Password Service Account token
             └── fetches at runtime:
@@ -271,7 +275,7 @@ macOS Keychain (encrypted)
 ### Setup
 
 1. **Create 1Password Service Account**:
-   - Go to https://my.1password.com → Developer Tools → Service Accounts
+   - Go to <https://my.1password.com> → Developer Tools → Service Accounts
    - Create account named "Backups" (or similar)
    - Grant read access to the "Restic" vault
    - Copy the token (starts with `ops_`)
@@ -281,6 +285,7 @@ macOS Keychain (encrypted)
    - `AWS Backup Credentials - sys-ms` (or `sys-mbp`) - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY fields
 
 3. **Run setup command**:
+
    ```bash
    dot profile set personal
    dot restic setup
@@ -292,11 +297,13 @@ macOS Keychain (encrypted)
      then update machine mapping in `scripts/lib/cmd_restic.sh`.
 
 4. **Initialize repository** (first time only):
+
    ```bash
    restic-backup init
    ```
 
 The setup command automatically installs launchd schedules for:
+
 - Daily backup at 06:00
 - Weekly forget at Sunday 03:00
 - Weekly prune at Sunday 03:30
@@ -318,7 +325,7 @@ restic-backup check
 restic-backup restore latest --target /tmp/restore
 ```
 
-### Configuration
+### Backup configuration files
 
 - Config: `~/.config/resticprofile/profiles.toml`
 - Wrapper: `~/.config/resticprofile/backup`
@@ -336,12 +343,14 @@ Some components require manual setup or purchase:
 ### Fonts
 
 **Berkeley Mono** (Commercial font, used in terminal):
+
 - Purchase from [Berkeley Graphics](https://berkeleygraphics.com/)
 - Stored in private repository: `git@github.com:nsyout/system-fonts.git`
 - Automatically installed during `dot init` (personal profile) if you have SSH access
 - Fallback to **IosevkaTerm Nerd Font** (free, included in Brewfile) if not available
 
 To use your own fonts:
+
 1. Create a private fonts repository
 2. Update the `install_fonts` flow in `scripts/lib/cmd_init.sh` with your repo URL
 3. Or manually install fonts to `~/Library/Fonts/`
@@ -349,6 +358,7 @@ To use your own fonts:
 ### Mac App Store Apps
 
 The following apps require Mac App Store sign-in and previous purchase:
+
 - **Reeder Classic** (RSS reader)
 - **Drafts** (Quick notes)
 
@@ -369,6 +379,7 @@ These are installed automatically if you're signed into the App Store.
 ### Shell Configuration
 
 **Modular Zsh setup**:
+
 - Numbered configuration files in `.zshrc.d/` for ordered loading
 - **Starship prompt** (10-50x faster than custom shell prompts)
   - Async rendering for instant prompt display
@@ -377,37 +388,38 @@ These are installed automatically if you're signed into the App Store.
   - Terraform, Docker, AWS context display
   - Custom configuration in `.config/starship/starship.toml`
 - Syntax highlighting (zsh-syntax-highlighting)
-- Command suggestions (zsh-you-should-use)
 - FZF integration with custom bindings
 - Smart directory navigation (zoxide, bd)
-- Git utilities and aliases
+- Git utilities (full `git`/`gh` commands preferred)
 - Consolidated aliases (single source of truth)
 
 **Key aliases**:
-- Modern CLI replacements (`eza` for ls, `bat` for cat, `btop` for top, `ncdu` for du)
-- Git shortcuts (`gs`, `ga`, `gp`, `lg` for lazygit)
-- Docker commands (`dcu`, `dcd`)
-- Dotfiles management (`dot`, `update`, `dotstow`)
-- Safe trash function (macOS Finder integration)
+
+- `dotf` for jumping to `~/.dotfiles`
+- Project and directory navigation (`pj`, `pjf`, `pjp`, `pjr`, `dl`, `dt`)
+- Listing defaults with `eza` (`l`, `lt`, `lt1`, `lt2`, `lt3`)
+- Explicit disk usage helper (`diskusage`)
+- Safe trash function (macOS Finder integration via `trash`)
 
 **Custom functions** (defined in `.config/zsh/scripts.zsh`):
 
-| Function | Description |
-|----------|-------------|
-| `nsy` | noisyoutput.com content management (see below) |
-| `extract <file>` | Extract any archive (zip, tar, gz, 7z, rar, etc.) |
-| `mkextract <file>` | Extract archive into its own directory |
-| `compress <files>` | Create timestamped tar.gz archive |
-| `ytdlvideo <url>` | Download single video (best quality, mkv) |
-| `ytdlplaylist <url>` | Download playlist (numbered, mkv) |
-| `ytdlaudio <url>` | Extract audio as MP3 |
-| `ytdlarchive <url>` | Archive channel/playlist with progress tracking |
-| `cheat <topic>` | Fetch cheatsheet from cheat.sh |
-| `trash-size` | Show trash folder size |
-| `trash-clean [days]` | Empty trash older than N days (default 7) |
-| `trash-status` | Show trash size and recent items |
+|Function|Description|
+|---|---|
+|`nsy`|noisyoutput.com content management (see below)|
+|`extract <file>`|Extract any archive (zip, tar, gz, 7z, rar, etc.)|
+|`mkextract <file>`|Extract archive into its own directory|
+|`compress <files>`|Create timestamped tar.gz archive|
+|`ytdlvideo <url>`|Download single video (best quality, mkv)|
+|`ytdlplaylist <url>`|Download playlist (numbered, mkv)|
+|`ytdlaudio <url>`|Extract audio as MP3|
+|`ytdlarchive <url>`|Archive channel/playlist with progress tracking|
+|`cheat <topic>`|Fetch cheatsheet from cheat.sh|
+|`trash-size`|Show trash folder size|
+|`trash-clean [days]`|Empty trash older than N days (default 7)|
+|`trash-status`|Show trash size and recent items|
 
 **Additional Configurations**:
+
 - **yt-dlp**: Archival-focused configuration in `.config/yt-dlp/config`
   - Firefox cookie integration
   - Metadata embedding and thumbnail downloads
@@ -422,6 +434,7 @@ These are installed automatically if you're signed into the App Store.
 ### Included Tools
 
 **CLI Essentials:**
+
 - `starship` - Fast, customizable prompt
 - `btop` - Modern system monitor
 - `ripgrep` - Fast text search (rg)
@@ -439,6 +452,7 @@ These are installed automatically if you're signed into the App Store.
 - `diff-so-fancy` - Better git diff
 
 **Development:**
+
 - `rustup-init` - Rust toolchain installer
 - `go` - Go programming language
 - `deno` - JavaScript/TypeScript runtime
@@ -452,6 +466,7 @@ These are installed automatically if you're signed into the App Store.
 - GNU utilities (`coreutils`, `gnu-sed`, `grep`, `findutils`, `moreutils`)
 
 **DevOps:**
+
 - `docker` - Container platform
 - `awscli` - AWS CLI
 - `opentofu` - Terraform alternative
@@ -459,6 +474,7 @@ These are installed automatically if you're signed into the App Store.
 - `tailscale` - VPN mesh network
 
 **Security & Authentication:**
+
 - `1password` - Password manager (desktop app)
 - `1password-cli` - 1Password CLI
 - `openssh` - SSH with FIDO2 support
@@ -467,12 +483,14 @@ These are installed automatically if you're signed into the App Store.
 - `age` - File encryption tool
 
 **Media & Download:**
+
 - `yt-dlp` - Video downloader/archiver
 - `gallery-dl` - Gallery downloader
 - `ffmpeg` - Media processing
 - `aria2` - Download manager
 
 **System Utilities:**
+
 - `mas` - Mac App Store CLI
 - `terminal-notifier` - Terminal notifications
 - `wifi-password` - WiFi password retrieval
@@ -483,6 +501,7 @@ These are installed automatically if you're signed into the App Store.
 - `gh` - GitHub CLI
 
 **Backup:**
+
 - `restic` - Fast, secure backup program
 - `resticprofile` - Configuration manager for restic
 
@@ -491,14 +510,16 @@ These are installed automatically if you're signed into the App Store.
 ### Adding New Applications
 
 1. Add configuration to `.config/`:
+
 ```bash
 mkdir -p .config/newapp
 # Add your config files
 ```
 
-2. Update `.gitignore` if needed to track the files
+1. Update `.gitignore` if needed to track the files
 
-3. Re-deploy with stow:
+2. Re-deploy with stow:
+
 ```bash
 cd ~/.dotfiles
 stow --restow .
@@ -518,19 +539,105 @@ alias myalias="command"
 
 ## Updating
 
-Use `dot update` (or the `update` alias) to update everything:
+Use `dot update` to update everything:
 
 ```bash
 dot update
 ```
 
 This will:
+
 - Check for macOS system updates
 - Pull latest dotfiles changes (if remote has changes)
-- Re-link configs (only if dotfiles changed)
-- Update Homebrew packages
-- Run `dot packages sync` logic when manifests change
-- Update Firefox configuration (only if remote has changes)
+- Re-link configs for the active profile (only if dotfiles changed)
+- Run Homebrew update/upgrade
+- Run profile-aware package sync + retry failed manifests
+- Run `dot doctor`
+
+Firefox updates are explicit and separate: `dot firefox sync`
+
+## Maintenance (Local-Only)
+
+### Operational maintenance
+
+Use one command for ongoing maintenance:
+
+```bash
+dot update
+```
+
+Use a profile override when needed:
+
+```bash
+dot update --profile <base|personal|work>
+```
+
+Preview changes first:
+
+```bash
+dot update --dry-run
+```
+
+Package removals are explicit and separate (can remove many packages):
+
+```bash
+dot packages cleanup --profile <base|personal|work>
+```
+
+Firefox updates are explicit and separate:
+
+```bash
+dot firefox sync
+```
+
+### Change validation (QA)
+
+Run all local QA checks:
+
+```bash
+dot qa
+```
+
+`local-qa.sh` includes:
+
+- Blocking checks: `shellcheck`, `bash -n`, `zsh -n`, `gitleaks detect --no-git --redact`
+- Config sanity: AeroSpace TOML parse (`.config/aerospace/aerospace.toml`)
+- Warn-only checks: `shfmt -d`, `markdownlint-cli2 README.md`, `./scripts/local-sast.sh` (opengrep)
+
+Run security scans only:
+
+```bash
+# Working tree secrets + strict SAST
+dot security
+
+# Add git history secret scan
+dot security --history
+
+# Keep SAST non-blocking
+dot security --warn-sast
+```
+
+Run SAST scan only:
+
+```bash
+# warn-only behavior inside local-qa
+dot sast
+
+# strict mode (non-zero exit on findings)
+dot sast --strict
+```
+
+Install local pre-commit hook (runs the same QA script on every commit):
+
+```bash
+ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+```
+
+### Public repo hygiene (local)
+
+- Secrets: `./scripts/local-security.sh` (add `--history` for deep scan)
+- Lint/syntax: `shellcheck`, `bash -n`, `zsh -n`
+- Docs drift: verify command examples against real `dot` command behavior
 
 ## Package Management
 
@@ -610,6 +717,7 @@ Typical shell startup: ~100-200ms on modern hardware
 ### Stow Conflicts
 
 The setup command handles conflicts automatically by:
+
 1. Detecting which files conflict
 2. Showing you the list of conflicting files
 3. Offering options: **[B]ackup and replace**, **[S]kip**, or **[A]bort**
@@ -627,11 +735,11 @@ If you get conflicts manually, you can backup and remove the conflicting files, 
 
 ### Stow Commands
 
-| Command | What it does |
-|---------|--------------|
-| `stow .` | Create symlinks (won't overwrite existing files) |
-| `stow -R .` | Restow = unstow + stow (use after restructuring dotfiles) |
-| `stow -D .` | Delete symlinks (unstow) |
+|Command|What it does|
+|---|---|
+|`stow .`|Create symlinks (won't overwrite existing files)|
+|`stow -R .`|Restow = unstow + stow (use after restructuring dotfiles)|
+|`stow -D .`|Delete symlinks (unstow)|
 
 **Important**: Stow silently skips paths where real files already exist. It won't overwrite or warn - it just does nothing for those paths. If `dot init` or a manual copy created real files, stow won't replace them with symlinks.
 
@@ -699,6 +807,7 @@ time zsh -i -c exit
 This repository is for personal use. Feel free to fork and adapt for your own needs.
 
 Feel free to fork and customize for your needs. PRs welcome for:
+
 - Additional platform support
 - New tool configurations
 - Bug fixes

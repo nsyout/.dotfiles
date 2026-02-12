@@ -1,0 +1,46 @@
+rules:
+  - id: shell-curl-pipe-shell
+    languages: [bash]
+    severity: ERROR
+    message: Avoid piping curl output directly to a shell.
+    patterns:
+      - pattern-either:
+          - pattern: curl ... | sh
+          - pattern: curl ... | bash
+          - pattern: curl ... | zsh
+
+  - id: shell-wget-pipe-shell
+    languages: [bash]
+    severity: ERROR
+    message: Avoid piping wget output directly to a shell.
+    patterns:
+      - pattern-either:
+          - pattern: wget ... -O - | sh
+          - pattern: wget ... -O - | bash
+          - pattern: wget ... -O - | zsh
+
+  - id: shell-eval-dynamic
+    languages: [bash]
+    severity: WARNING
+    message: Review eval usage; dynamic eval can execute unexpected input.
+    patterns:
+      - pattern-either:
+          - pattern: eval "$X"
+          - pattern: eval "$..."
+          - pattern: eval $X
+      - pattern-not: eval "$(/opt/homebrew/bin/brew shellenv)"
+      - pattern-not: eval "$(/usr/local/bin/brew shellenv)"
+
+  - id: shell-strict-host-key-checking-disabled
+    languages: [bash]
+    severity: WARNING
+    message: Avoid disabling SSH host key checking unless explicitly justified.
+    pattern: ssh ... -o StrictHostKeyChecking=no ...
+
+  - id: shell-rm-rf-root
+    languages: [bash]
+    severity: ERROR
+    message: Potentially destructive rm -rf / pattern.
+    pattern-either:
+      - pattern: rm -rf /
+      - pattern: rm -fr /

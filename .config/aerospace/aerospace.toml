@@ -90,5 +90,9 @@ if.app-id = 'com.mitchellh.ghostty'
 run = 'layout tiling'
 
 [[on-window-detected]]
+if.app-id = 'com.apple.notificationcenterui'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-name-regex-substring = 'spotify|mail|calendar|calculator|raycast|reminders|1password|slack|finder|tv|messages|music|discord|activity monitor'
 run = 'layout floating'

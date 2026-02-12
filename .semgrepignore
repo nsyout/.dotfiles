@@ -1,0 +1,12 @@
+# Vendored / third-party code
+.config/zsh/plugins/
+
+# VCS and tooling dirs
+.git/
+.github/
+
+# Common generated dirs
+node_modules/
+dist/
+build/
+.cache/

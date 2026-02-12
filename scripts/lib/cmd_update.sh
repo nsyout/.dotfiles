@@ -2,11 +2,24 @@
 
 dot_cmd_update() {
 	local dry_run=false
+	local requested_profile=""
+	local profile=""
+	local dotfiles_dir="${DOTFILES_DIR:-$HOME/.dotfiles}"
+	local warnings=()
+	local dotfiles_updated=false
 
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
 		--dry-run)
 			dry_run=true
+			;;
+		--profile)
+			shift
+			requested_profile="${1:-}"
+			if [[ -z "$requested_profile" ]]; then
+				error "Usage: dot update [--dry-run] [--profile <base|personal|work>]"
+				return 1
+			fi
 			;;
 		-h | --help)
 			cat <<'EOF'
@@ -14,6 +27,12 @@ Usage: dot update [options]
 
 Options:
   --dry-run
+  --profile <base|personal|work>
+
+Notes:
+  - `dot update` is profile-aware for stow/package sync.
+  - Package removal is explicit; run `dot packages cleanup` separately.
+  - Firefox sync is explicit; run `dot firefox sync`.
 EOF
 			return 0
 			;;
@@ -25,10 +44,15 @@ EOF
 		shift
 	done
 
-	local dotfiles_dir="${DOTFILES_DIR:-$HOME/.dotfiles}"
-	local warnings=()
-	local dotfiles_updated=false
-	local brewfile_changed=false
+	if [[ -n "$requested_profile" ]]; then
+		if ! dot_profile_is_valid "$requested_profile"; then
+			error "Invalid profile '$requested_profile'. Use: base, personal, work"
+			return 1
+		fi
+		profile="$requested_profile"
+	else
+		profile="$(dot_profile_get)"
+	fi
 
 	check_system_updates() {
 		step "Checking for macOS system updates"
@@ -102,10 +126,6 @@ EOF
 			return 0
 		fi
 
-		if git diff --name-only "$local_head" "$remote_head" | grep -q "^Brewfile$"; then
-			brewfile_changed=true
-		fi
-
 		info "Pulling latest changes..."
 		if ! git pull origin "$branch"; then
 			cd "$previous_dir"
@@ -118,76 +138,18 @@ EOF
 		cd "$previous_dir"
 	}
 
-	restow_dotfiles() {
+	apply_profile_stow() {
 		if [[ "$dotfiles_updated" != "true" ]]; then
 			info "Skipping re-link (no dotfiles changes)"
 			return 0
 		fi
 
-		step "Re-linking dotfiles"
-
-		local previous_dir
-		previous_dir="$(pwd)"
-		cd "$dotfiles_dir"
-
-		if ! command_exists stow; then
-			cd "$previous_dir"
-			error "GNU Stow is not installed"
-			return 1
-		fi
-
-		info "Re-deploying root-level configs..."
-
-		stow --delete --target="$HOME" --no-folding --ignore='^\.config' . 2>/dev/null || true
-
-		if ! stow --target="$HOME" --no-folding --ignore='^\.config' -v . 2>/dev/null; then
-			warn "Conflicts detected in root configs"
-			read -r -p "Override existing files? (y/N): " choice
-			if [[ "$choice" =~ ^[Yy]$ ]]; then
-				stow --target="$HOME" --no-folding --ignore='^\.config' --override=".*" -v . || warn "Failed to deploy root configs"
-			else
-				warn "Skipping root configs"
-			fi
-		fi
-
-		local configs=(aerospace ghostty git nvim tmux zsh)
-
-		for config in "${configs[@]}"; do
-			if [[ ! -d ".config/$config" ]]; then
-				continue
-			fi
-
-			info "Re-deploying $config..."
-			mkdir -p "$HOME/.config"
-
-			stow --delete --target="$HOME/.config" --dir=".config" "$config" 2>/dev/null || true
-
-			if stow --target="$HOME/.config" --dir=".config" -v "$config" 2>/dev/null; then
-				info "  ✓ $config updated"
-			else
-				warn "  Conflicts detected in $config"
-				read -r -p "  Override existing $config files? (y/N): " choice
-
-				if [[ "$choice" =~ ^[Yy]$ ]]; then
-					if stow --target="$HOME/.config" --dir=".config" --override=".*" -v "$config"; then
-						info "  ✓ $config updated with overrides"
-					else
-						cd "$previous_dir"
-						error "  ✗ Failed to update $config"
-						return 1
-					fi
-				else
-					warn "  ✗ Skipping $config"
-				fi
-			fi
-		done
-
-		info "Dotfiles re-linking complete"
-		cd "$previous_dir"
+		step "Re-linking dotfiles (profile: $profile)"
+		dot_stow_apply "$profile"
 	}
 
-	update_packages() {
-		step "Updating Homebrew packages"
+	update_packages_for_profile() {
+		step "Updating Homebrew and syncing packages (profile: $profile)"
 
 		if ! command_exists brew; then
 			warn "Homebrew not installed, skipping package updates"
@@ -200,16 +162,13 @@ EOF
 		info "Upgrading installed packages..."
 		brew upgrade || warn "Some packages failed to upgrade"
 
-		if [[ "$brewfile_changed" == "true" && -f "$dotfiles_dir/Brewfile" ]]; then
-			info "Brewfile changed, installing new packages..."
-			local previous_dir
-			previous_dir="$(pwd)"
-			cd "$dotfiles_dir"
-			brew bundle || warn "Some packages failed to install"
-			cd "$previous_dir"
+		dot_packages_sync "$profile"
+
+		if ! dot_packages_retry_failed "$profile"; then
+			warnings+=("Some package manifests still failing - run 'dot retry-failed --profile $profile'")
 		fi
 
-		info "Cleaning up Homebrew..."
+		info "Cleaning Homebrew cache and old versions..."
 		brew cleanup --prune=all || warn "Homebrew cleanup had issues"
 
 		info "Checking Homebrew health..."
@@ -219,52 +178,8 @@ EOF
 		else
 			info "Homebrew is healthy"
 		fi
-	}
 
-	update_firefox() {
-		local firefox_config="$dotfiles_dir/.config/firefox"
-		local user_overrides="$firefox_config/user-overrides.js"
-		local profiles_dir="$HOME/Library/Application Support/Firefox/Profiles"
-
-		if [[ ! -d "/Applications/Firefox.app" ]]; then
-			info "Firefox not installed, skipping"
-			return 0
-		fi
-
-		if [[ ! -f "$user_overrides" ]]; then
-			warn "Firefox user-overrides.js not found in dotfiles, skipping"
-			return 0
-		fi
-
-		local profile_dir
-		profile_dir=$(find "$profiles_dir" -maxdepth 1 -type d -name "*.default*" 2>/dev/null | head -1)
-
-		if [[ -z "$profile_dir" ]]; then
-			info "No Firefox profile found, skipping"
-			return 0
-		fi
-
-		step "Updating Firefox configuration"
-		info "Using profile: $(basename "$profile_dir")"
-
-		info "Downloading latest arkenfox user.js..."
-		local arkenfox_url="https://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
-		if ! curl -sL "$arkenfox_url" -o "$profile_dir/user.js"; then
-			warn "Failed to download arkenfox user.js"
-			return 0
-		fi
-
-		info "Applying user overrides from dotfiles..."
-		cat "$user_overrides" >>"$profile_dir/user.js"
-
-		info "Firefox configuration updated"
-		info "Restart Firefox for changes to take effect"
-	}
-
-	reload_shell() {
-		step "Reloading shell configuration"
-		info "Shell configuration updated"
-		info "Please restart your terminal or run: exec zsh"
+		info "Package removal is explicit; run 'dot packages cleanup --profile $profile' when desired"
 	}
 
 	cat <<EOF
@@ -275,12 +190,15 @@ EOF
 
 	if [[ "$dry_run" == "true" ]]; then
 		step "Dry run"
+		info "Profile: $profile"
 		info "Would check macOS updates"
 		info "Would fetch/pull latest dotfiles from git"
-		info "Would re-deploy stow packages"
-		info "Would run Homebrew update/upgrade/cleanup"
-		info "Would refresh Firefox policies and user.js"
-		info "Would print shell reload guidance"
+		info "Would re-deploy stow packages only if dotfiles changed"
+		info "Would run Homebrew update/upgrade"
+		info "Would run dot packages sync + retry-failed for profile '$profile'"
+		info "Would run brew cleanup and brew doctor"
+		info "Would not run package cleanup (explicit command)"
+		info "Would not run Firefox sync (use: dot firefox sync)"
 		return 0
 	fi
 
@@ -289,14 +207,13 @@ EOF
 		return 1
 	fi
 
-	info "Starting dotfiles update..."
+	info "Starting dotfiles update (profile: $profile)..."
 
 	check_system_updates
 	update_dotfiles_repo || return 1
-	restow_dotfiles || return 1
-	update_packages
-	update_firefox
-	reload_shell
+	apply_profile_stow || return 1
+	update_packages_for_profile
+	dot_cmd_doctor
 
 	echo
 	printf "%b╔══════════════════════════════════════════╗%b\n" "$COLOR_GREEN" "$COLOR_RESET"
@@ -322,5 +239,5 @@ EOF
 		info "✓ Everything is up to date!"
 	fi
 
-	info "Restart your terminal if you see any issues"
+	info "Firefox sync is explicit: run 'dot firefox sync' when needed"
 }
