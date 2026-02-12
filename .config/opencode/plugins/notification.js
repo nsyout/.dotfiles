@@ -1,3 +1,11 @@
+import { homedir } from "os";
+import { join } from "path";
+
+const ALERT_SOUND = join(
+  homedir(),
+  ".config/opencode/sounds/halo_shield_recharge_phone_3a.aiff",
+);
+
 export const NotificationPlugin = async ({ $, client }) => {
   // Check if a session is a main (non-subagent) session
   const isMainSession = async (sessionID) => {
@@ -17,13 +25,13 @@ export const NotificationPlugin = async ({ $, client }) => {
       if (event.type === "session.idle") {
         const sessionID = event.properties.sessionID;
         if (await isMainSession(sessionID)) {
-          await $`osascript -e 'display notification "Session completed" with title "OpenCode"'`;
+          await $`afplay ${ALERT_SOUND}`;
         }
       }
 
       // Permission prompt created
       if (event.type === "permission.asked") {
-        await $`osascript -e 'display notification "Permission required" with title "OpenCode"'`;
+        await $`afplay ${ALERT_SOUND}`;
       }
     },
   };

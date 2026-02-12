@@ -38,7 +38,6 @@ brew "shellcheck"        # Shell script analyzer
 brew "shfmt"             # Shell formatter
 brew "markdownlint-cli2" # Markdown linting
 brew "gitleaks"          # Secret scanning
-brew "opengrep"          # Local SAST scanning
 
 
 # ------------------------------------------------------------------------------
