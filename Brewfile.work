@@ -1,3 +1,8 @@
 # Work overlay packages
-# Add work-only brews/casks here.
 
+# Work dev / infra
+brew "awscli"            # AWS CLI (for aws context detection)
+brew "docker"            # Docker CLI
+
+# Work communication
+cask "slack"             # Team communication

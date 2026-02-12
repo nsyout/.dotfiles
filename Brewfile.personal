@@ -5,6 +5,34 @@ tap "creativeprojects/tap"    # For resticprofile
 # Backup
 brew "restic"            # Fast, secure backup program
 brew "creativeprojects/tap/resticprofile"  # Configuration manager for restic
+brew "tailscale"         # VPN mesh network
+
+# Personal dev tools
+brew "rustup-init"       # Rust toolchain installer
+brew "go"                # Go programming language
+brew "harper"            # Local grammar checker
+brew "uv"                # Fast Python package installer
+brew "hugo"              # Static site generator
+brew "opentofu"          # OpenTofu (Terraform alternative)
+brew "ansible"           # Configuration management
+
+# Personal media/download
+brew "yt-dlp"            # Video downloader
+brew "gallery-dl"        # Gallery downloader
+brew "ffmpeg"            # Media processing
+brew "aria2"             # Download manager
+
+# Personal applications
+cask "dropbox"           # Cloud storage
+cask "transmit"          # File transfer client
+cask "ogdesign-eagle"    # Digital asset organizer
+cask "steam"             # Gaming platform
+cask "slack"             # Team communication
+cask "claude-code"       # Claude Code CLI
+cask "carbon-copy-cloner" # Backup software
+cask "vlc"               # Media player
+cask "discord"           # Communication platform
+cask "macwhisper"        # AI transcription
 
 # App Store Applications
 mas "Reeder Classic", id: 1529448980  # RSS reader
