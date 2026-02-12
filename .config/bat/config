@@ -1,0 +1,8 @@
+# Enable useful context when viewing files
+--style=numbers,changes,header
+
+# Use colors whenever output supports it
+--color=auto
+
+# Page long output and keep terminal behavior predictable
+--paging=auto
