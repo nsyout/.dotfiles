@@ -112,7 +112,7 @@
     "edit": "allow",
     "webfetch": "ask"
   },
-  "theme": "flexoki",
+  "theme": "system",
   "keybinds": {
     "leader": "ctrl+o",
     "messages_half_page_up": "ctrl+u",
