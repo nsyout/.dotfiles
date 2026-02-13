@@ -60,31 +60,6 @@ EOF
 		((issues++))
 	fi
 
-	if command_exists jj; then
-		info "jj: OK"
-
-		local jj_config="$HOME/.config/jj/config.toml"
-		if [[ -f "$jj_config" ]]; then
-			info "jj config: present ($jj_config)"
-		else
-			warn "jj config: missing ($jj_config)"
-			((warnings++))
-		fi
-
-		local jj_name jj_email
-		jj_name="$(jj config get user.name 2>/dev/null || true)"
-		jj_email="$(jj config get user.email 2>/dev/null || true)"
-		if [[ -n "$jj_name" && -n "$jj_email" ]]; then
-			info "jj user identity: configured"
-		else
-			warn "jj user identity: incomplete (set user.name and user.email)"
-			((warnings++))
-		fi
-	else
-		warn "jj: missing"
-		((warnings++))
-	fi
-
 	if command_exists nvim; then
 		if nvim --headless "+lua print('doctor-nvim-ok')" +qa >/dev/null 2>&1; then
 			info "Neovim: OK"

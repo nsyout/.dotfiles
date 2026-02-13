@@ -237,7 +237,7 @@ vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc =
 
 vim.keymap.set("n", "<leader>sb", require("telescope.builtin").buffers, { desc = "Search open buffers" })
 
--- <leader>sf moved to telescope.lua (jj-aware with fallback)
+-- <leader>sf moved to telescope.lua
 
 vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "Search help tags" })
 

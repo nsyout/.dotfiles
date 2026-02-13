@@ -3,7 +3,7 @@
 **Generated:** 2026-01-29T00:00:00Z
 **Commit:** f2997bb
 
-Lua-based, lazy.nvim managed. TypeScript-focused w/ LSP. jj-aware.
+Lua-based, lazy.nvim managed. TypeScript-focused w/ LSP.
 
 ## STRUCTURE
 
@@ -31,7 +31,7 @@ nvim/
 | LSP server | `lua/plugins/lsp.lua` via `vim.lsp.config()` |
 | Formatter | `lua/plugins/conform.lua` |
 | TypeScript | `lua/plugins/typescript-tools.lua` (not lspconfig) |
-| VCS signs | `lua/plugins/vcsigns.lua` (works with jj) |
+| VCS signs | `lua/plugins/vcsigns.lua` |
 
 ## CONVENTIONS
 
@@ -63,7 +63,7 @@ nvim/
 | `<leader>'` | n | Switch to last buffer |
 | `<leader>f` | n | Format buffer |
 | `<leader>1-5` | n | Harpoon file navigation |
-| `<leader>sf` | n | Find files (jj-aware) |
+| `<leader>sf` | n | Find files |
 | `<leader>sg` | n | Live grep |
 | `<leader>/` | n | Fuzzy find in buffer |
 | `<leader>ts` | n | Toggle TwoSlash queries |
@@ -84,8 +84,7 @@ JS/TS/TSX: oxfmt -> biome -> prettierd (first available, respects project config
 
 ## UNIQUE FEATURES
 
-- vcsigns.nvim: Works with jj, diffs against parent commit
+- vcsigns.nvim: Diffs against parent commit
 - tiny-inline-diagnostic: Powerline-style inline diagnostics
 - Snacks.nvim: Notifications, buffer delete, git browse, toggles
 - TwoSlash queries: Inline type inspection for TS
-- jj-aware file picker: Tries jj telescope extension first

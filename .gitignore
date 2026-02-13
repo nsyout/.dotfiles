@@ -106,9 +106,6 @@ vendor/
 .zshrc.local
 .bashrc.local
 
-# JJ local repo metadata (machine/path specific)
-.config/jj/repos/
-
 # Claude Code
 .claude/
 claude-*

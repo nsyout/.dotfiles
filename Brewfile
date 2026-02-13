@@ -5,13 +5,11 @@
 # Taps
 # ------------------------------------------------------------------------------
 tap "nikitabobko/tap"         # For AeroSpace window manager
-tap "dmmulroy/tap"            # For jj-starship prompt helper
 
 # ------------------------------------------------------------------------------
 # Essential Tools
 # ------------------------------------------------------------------------------
 brew "git"
-brew "jj"                # Jujutsu VCS
 brew "stow"              # Dotfiles management
 brew "zsh"               # Latest ZSH
 brew "neovim"            # Modern text editor
@@ -24,11 +22,9 @@ brew "zoxide"            # Smart cd replacement
 brew "tree"              # Directory tree view
 brew "jq"                # JSON processor
 brew "starship"          # Fast, customizable prompt
-brew "dmmulroy/tap/jj-starship" # JJ-aware prompt renderer
 brew "tmux"              # Terminal multiplexer
 brew "just"              # Command runner
 brew "lazygit"           # Terminal UI for git
-brew "lazyjj"            # Terminal UI for jj
 
 # ------------------------------------------------------------------------------
 # Development Languages & Tools

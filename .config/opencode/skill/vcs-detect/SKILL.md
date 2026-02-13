@@ -1,16 +1,14 @@
 # vcs-detect
 
-Detect repository VCS context and normalize workflows.
+Normalize git repository context and workflows.
 
 ## Policy
 
-- Detect VCS before running status/log/diff/commit/push commands.
-- If `jj root` succeeds, prefer `jj` (including colocated `.jj` + `.git` repos).
-- Otherwise use `git` + `gh`.
+- Use `git` + `gh` for status/log/diff/commit/push operations.
 
 ## Output
 
-- VCS type: `jj` or `git`
+- VCS type: `git`
 - Repository root path
 - Current branch/bookmark and working-tree state
 - Recommended next command(s) using the detected VCS
@@ -18,9 +16,5 @@ Detect repository VCS context and normalize workflows.
 ## Detection
 
 ```bash
-if jj root >/dev/null 2>&1; then
-  echo "jj"
-else
-  echo "git"
-fi
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo "git"
 ```

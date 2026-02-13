@@ -4,7 +4,7 @@ return {
 		event = "BufEnter",
 		config = function()
 			require("vcsigns").setup({
-				-- Diff against parent (good for jj new+squash workflow)
+				-- Diff against parent commit by default
 				target_commit = 1,
 				-- Match gitsigns default symbols
 				signs = {

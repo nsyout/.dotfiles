@@ -119,11 +119,6 @@ repostatus() {
   done
 }
 
-# Prefer jj command without zsh autocorrect prompting to /usr/bin/jjs
-if _exists jj; then
-  alias jj='nocorrect jj'
-fi
-
 # Help/documentation
 if _exists tldr; then
   alias help="tldr"
