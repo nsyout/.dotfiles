@@ -84,8 +84,8 @@ EOF
 	update_dotfiles_repo() {
 		step "Updating dotfiles repository"
 
-		if [[ ! -d "$dotfiles_dir/.git" ]]; then
-			error "Dotfiles directory is not a git repository: $dotfiles_dir"
+		if [[ ! -d "$dotfiles_dir/.git" && ! -d "$dotfiles_dir/.jj" ]]; then
+			error "Dotfiles directory is not a git/jj repository: $dotfiles_dir"
 			return 1
 		fi
 
@@ -105,36 +105,66 @@ EOF
 			fi
 		fi
 
-		info "Fetching remote changes..."
-		git fetch origin
+		if [[ -d "$dotfiles_dir/.jj" ]] && command_exists jj; then
+			info "Detected jj-managed repository"
 
-		local branch
-		branch=$(git rev-parse --abbrev-ref HEAD)
-		local local_head remote_head
-		local_head=$(git rev-parse HEAD)
-		remote_head=$(git rev-parse "origin/$branch" 2>/dev/null) || remote_head=""
+			local before_head after_head
+			before_head=$(jj -R "$dotfiles_dir" log -r @ --no-graph -T 'commit_id.shortest(12)' 2>/dev/null || true)
 
-		if [[ -z "$remote_head" ]]; then
-			warn "Could not find remote branch origin/$branch"
-			cd "$previous_dir"
-			return 0
+			info "Fetching remote changes via jj..."
+			if ! jj -R "$dotfiles_dir" git fetch; then
+				cd "$previous_dir"
+				error "Failed to fetch latest changes via jj"
+				return 1
+			fi
+
+			info "Rebasing working copy onto trunk() via jj..."
+			if ! jj -R "$dotfiles_dir" rebase -d 'trunk()'; then
+				cd "$previous_dir"
+				error "Failed to rebase dotfiles via jj"
+				return 1
+			fi
+
+			after_head=$(jj -R "$dotfiles_dir" log -r @ --no-graph -T 'commit_id.shortest(12)' 2>/dev/null || true)
+
+			if [[ -n "$before_head" && -n "$after_head" && "$before_head" != "$after_head" ]]; then
+				dotfiles_updated=true
+				info "Repository updated successfully via jj"
+			else
+				info "Dotfiles already up to date"
+			fi
+		else
+			info "Fetching remote changes..."
+			git fetch origin
+
+			local branch
+			branch=$(git rev-parse --abbrev-ref HEAD)
+			local local_head remote_head
+			local_head=$(git rev-parse HEAD)
+			remote_head=$(git rev-parse "origin/$branch" 2>/dev/null) || remote_head=""
+
+			if [[ -z "$remote_head" ]]; then
+				warn "Could not find remote branch origin/$branch"
+				cd "$previous_dir"
+				return 0
+			fi
+
+			if [[ "$local_head" == "$remote_head" ]]; then
+				info "Dotfiles already up to date"
+				cd "$previous_dir"
+				return 0
+			fi
+
+			info "Pulling latest changes..."
+			if ! git pull origin "$branch"; then
+				cd "$previous_dir"
+				error "Failed to pull latest changes"
+				return 1
+			fi
+
+			dotfiles_updated=true
+			info "Repository updated successfully"
 		fi
-
-		if [[ "$local_head" == "$remote_head" ]]; then
-			info "Dotfiles already up to date"
-			cd "$previous_dir"
-			return 0
-		fi
-
-		info "Pulling latest changes..."
-		if ! git pull origin "$branch"; then
-			cd "$previous_dir"
-			error "Failed to pull latest changes"
-			return 1
-		fi
-
-		dotfiles_updated=true
-		info "Repository updated successfully"
 		cd "$previous_dir"
 	}
 
@@ -192,7 +222,7 @@ EOF
 		step "Dry run"
 		info "Profile: $profile"
 		info "Would check macOS updates"
-		info "Would fetch/pull latest dotfiles from git"
+		info "Would update dotfiles repo (jj fetch+rebase when colocated; git fetch+pull otherwise)"
 		info "Would re-deploy stow packages only if dotfiles changed"
 		info "Would run Homebrew update/upgrade"
 		info "Would run dot packages sync + retry-failed for profile '$profile'"

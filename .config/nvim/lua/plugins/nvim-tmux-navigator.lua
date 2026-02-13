@@ -1,9 +1,10 @@
 return {
-  {
-    "christoomey/vim-tmux-navigator",
-    lazy = false,
-    init = function()
-      vim.g.tmux_navigator_no_mappings = 1
-    end,
-  },
+	{
+		"alexghergh/nvim-tmux-navigation",
+		config = function()
+			require("nvim-tmux-navigation").setup({
+				disable_when_zoomed = true,
+			})
+		end,
+	},
 }

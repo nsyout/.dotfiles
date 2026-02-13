@@ -9,7 +9,8 @@ Local guidance for `.config/opencode/**`.
 
 ## Policy
 
-- Git-only workflows: use `git` + `gh` only.
+- VCS-aware workflows: detect jj vs git and use the right CLI for the repo.
+- Use `gh` for GitHub operations.
 - Exclude Cloudflare-specific skill/command content.
 - Keep prompts concise with explicit input/output.
 
