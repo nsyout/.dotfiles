@@ -10,6 +10,7 @@ tap "nikitabobko/tap"         # For AeroSpace window manager
 # Essential Tools
 # ------------------------------------------------------------------------------
 brew "git"
+brew "jj"                # Jujutsu VCS
 brew "stow"              # Dotfiles management
 brew "zsh"               # Latest ZSH
 brew "neovim"            # Modern text editor
@@ -25,6 +26,7 @@ brew "starship"          # Fast, customizable prompt
 brew "tmux"              # Terminal multiplexer
 brew "just"              # Command runner
 brew "lazygit"           # Terminal UI for git
+brew "lazyjj"            # Terminal UI for jj
 
 # ------------------------------------------------------------------------------
 # Development Languages & Tools

@@ -184,16 +184,18 @@ dot ssh status
 
 OpenCode configuration lives in `.config/opencode/`.
 
-- Git-only policy: command/skill docs are aligned to `git` + `gh` workflows
+- VCS-aware policy: detect `jj` vs `git` per repo and use the matching CLI
 - MCP servers currently enabled:
   - `context7` (remote docs lookup)
   - `grep_app` (remote code search)
   - `opensrc` (local source exploration via `npx opensrc-mcp`)
   - `overseer` (local task orchestration via `npx @dmmulroy/overseer mcp`)
+- VCS guardrail:
+  - Personal/local repos may use `jj` when present.
+  - Work repos (`~/projects/work`) remain git-first unless explicitly migrated.
 - Plugins:
   - `~/.config/opencode/plugins/*.js|*.ts` are auto-loaded by OpenCode at startup
-  - `opencode.json` keeps `"plugin": []` so no npm plugin package is pinned
-  - no local plugin is currently tracked in this repo
+  - `opencode.json` points to the local notification plugin at `file://{env:HOME}/.config/opencode/plugins/notification.js`
 
 ## noisyoutput.com Content Management
 

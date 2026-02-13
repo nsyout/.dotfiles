@@ -21,6 +21,7 @@
     "bash": {
       "*": "ask",
       "ast-grep *": "allow",
+      "afplay *": "allow",
       "awk *": "allow",
       "basename *": "allow",
       "biome *": "allow",
@@ -54,6 +55,9 @@
       "gh repo clone*": "allow",
       "git *": "allow",
       "git push*": "ask",
+      "jj *": "allow",
+      "jj git push*": "ask",
+      "jj gp*": "ask",
       "go *": "allow",
       "grep *": "allow",
       "gsed *": "allow",
@@ -120,7 +124,9 @@
     "input_delete": "delete,shift+delete",
     "terminal_title_toggle": "none"
   },
-  "plugin": [],
+  "plugin": [
+    "file://{env:HOME}/.config/opencode/plugins/notification.js"
+  ],
   "mcp": {
     "context7": {
       "type": "remote",

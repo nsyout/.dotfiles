@@ -6,6 +6,9 @@ dot_git_setup() {
 	local default_branch="main"
 	local signing_key=""
 	local enable_signing=""
+	local jj_name=""
+	local jj_email=""
+	local sync_jj_identity=false
 	local assume_yes=false
 
 	while [[ $# -gt 0 ]]; do
@@ -32,6 +35,17 @@ dot_git_setup() {
 		--disable-signing)
 			enable_signing="false"
 			;;
+		--jj-name)
+			shift
+			jj_name="${1:-}"
+			;;
+		--jj-email)
+			shift
+			jj_email="${1:-}"
+			;;
+		--sync-jj-identity)
+			sync_jj_identity=true
+			;;
 		--yes)
 			assume_yes=true
 			;;
@@ -45,6 +59,9 @@ Options:
   --default-branch <branch>
   --signing-key <public-key-path>
   --enable-signing | --disable-signing
+  --sync-jj-identity
+  --jj-name <name>
+  --jj-email <email>
   --yes
 EOF
 			return 0
@@ -122,6 +139,32 @@ EOF
 		git config --global gpg.format ssh
 		git config --global user.signingKey "$signing_key"
 		info "Set SSH signing key to '$signing_key'"
+	fi
+
+	if [[ "$sync_jj_identity" == "true" || -n "$jj_name" || -n "$jj_email" ]]; then
+		if command_exists jj; then
+			if [[ -z "$jj_name" && -n "$git_name" ]]; then
+				jj_name="$git_name"
+			fi
+			if [[ -z "$jj_email" && -n "$git_email" ]]; then
+				jj_email="$git_email"
+			fi
+
+			if [[ -n "$jj_name" ]]; then
+				jj config set --user user.name "$jj_name"
+				info "Set jj user.name"
+			fi
+			if [[ -n "$jj_email" ]]; then
+				jj config set --user user.email "$jj_email"
+				info "Set jj user.email"
+			fi
+
+			if [[ -z "$jj_name" && -z "$jj_email" ]]; then
+				warn "jj identity sync requested, but no identity values were provided"
+			fi
+		else
+			warn "jj not found, skipping jj identity setup"
+		fi
 	fi
 }
 
