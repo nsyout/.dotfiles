@@ -3,7 +3,7 @@
 
 # Minimal, clean format showing: git, languages (contextual), directory
 format = """
-[┌─](#879A39)$username$hostname$directory$git_branch$git_status
+[┌─](#879A39)$username$hostname$directory${custom.scm}${custom.git_scm}
 [└─](#879A39)$character"""
 
 [username]
@@ -26,12 +26,27 @@ truncation_length = 3
 truncate_to_repo = true
 style = "bold #3AA99F"
 
+[custom.scm]
+when = "jj-starship detect"
+shell = ["jj-starship", "--truncate-name", "20", "--bookmarks-display-limit", "1"]
+format = "[$output]($style) "
+style = "bold #8B7EC8"
+
+[custom.git_scm]
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && ! jj root >/dev/null 2>&1"
+command = "branch=$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD); if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then printf '%s [!]' \"$branch\"; else printf '%s' \"$branch\"; fi"
+shell = ["/bin/bash", "--noprofile", "--norc"]
+format = "[$output]($style) "
+style = "bold #8B7EC8"
+
 [git_branch]
+disabled = true
 symbol = " "
 format = "[$symbol$branch]($style) "
 style = "bold #8B7EC8"
 
 [git_status]
+disabled = true
 format = '([\[$all_status$ahead_behind\]]($style) )'
 style = "bold #D0A215"
 conflicted = "=${count}"

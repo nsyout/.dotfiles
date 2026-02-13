@@ -5,6 +5,7 @@
 # Taps
 # ------------------------------------------------------------------------------
 tap "nikitabobko/tap"         # For AeroSpace window manager
+tap "dmmulroy/tap"            # For jj-starship prompt helper
 
 # ------------------------------------------------------------------------------
 # Essential Tools
@@ -23,6 +24,7 @@ brew "zoxide"            # Smart cd replacement
 brew "tree"              # Directory tree view
 brew "jq"                # JSON processor
 brew "starship"          # Fast, customizable prompt
+brew "dmmulroy/tap/jj-starship" # JJ-aware prompt renderer
 brew "tmux"              # Terminal multiplexer
 brew "just"              # Command runner
 brew "lazygit"           # Terminal UI for git

@@ -68,3 +68,6 @@ nohup.out
 
 # Claude local settings
 **/.claude/settings.local.json
+
+# JJ local repo metadata directories created by jj git init --colocate
+.config/jj/repos/
