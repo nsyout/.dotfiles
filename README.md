@@ -392,6 +392,7 @@ These are installed automatically if you're signed into the App Store.
 - Syntax highlighting (zsh-syntax-highlighting)
 - FZF integration with custom bindings
 - Smart directory navigation (zoxide, bd)
+- Vim-style command-line editing (`bindkey -v`)
 - Git utilities (full `git`/`gh` commands preferred)
 - Consolidated aliases (single source of truth)
 
@@ -427,8 +428,8 @@ These are installed automatically if you're signed into the App Store.
   - Metadata embedding and thumbnail downloads
   - Organized output by channel/date
   - Politeness/anti-throttle settings
-- **tmux**: Minimal vim-style keybindings (Ctrl-a prefix)
-- **Ghostty**: Terminal emulator with Berkeley Mono font fallbacks
+- **tmux**: Flexoki-styled, vim-oriented keybindings (Ctrl+; prefix), resurrect/continuum restore enabled, login auto-start disabled
+- **Ghostty**: Terminal emulator with Berkeley Mono font fallbacks and `copy-on-select = clipboard`
 - **Wallpaper**: Desktop wallpaper automatically set during setup
   - Stored in `.config/wallpapers/`
   - Manual command: `dot wallpaper set [path]`

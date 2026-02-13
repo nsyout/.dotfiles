@@ -20,6 +20,7 @@ style = "bold #DA702C"
 [character]
 success_symbol = "[❯](#879A39)"
 error_symbol = "[❯](#D14D41)"
+vicmd_symbol = "[❮](bold #DA702C)"
 
 [directory]
 truncation_length = 3
