@@ -15,7 +15,7 @@ edit = true
 
 [signing]
 # Sign only commits authored by the configured jj user identity.
-behavior = "own"
+behavior = "drop"
 # Reuse SSH resident-key public key pointers from dot ssh workflow.
 backend = "ssh"
 key = "~/.ssh/personal_primary.pub"
