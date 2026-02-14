@@ -93,6 +93,7 @@ cask "sublime-text"      # Text editor
 # System Utilities
 cask "pearcleaner"       # App remover
 cask "raycast"           # Launcher and productivity
+cask "cleanshot"         # Screenshot and screen recording
 cask "logi-options+"     # Logitech device manager
 
 # Browsers
