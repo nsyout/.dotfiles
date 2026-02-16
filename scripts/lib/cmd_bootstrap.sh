@@ -186,7 +186,16 @@ EOF
 
 	if [[ "$assume_yes" != "true" ]]; then
 		step "Setting up YubiKey SSH Keys"
-		info "Run key extraction later if you prefer; skipping for now in automated cutover flow"
+		read -r -p "Sync YubiKey resident SSH keys now? [y/N] " -n 1 sync_choice
+		echo
+		if [[ "$sync_choice" =~ ^[Yy]$ ]]; then
+			if ! dot_cmd_ssh sync-yubikey-keys --slot primary; then
+				warn "YubiKey key sync failed; continuing bootstrap"
+				warn "Retry later with: dot ssh sync-yubikey-keys --slot primary"
+			fi
+		else
+			info "Skipping YubiKey key sync"
+		fi
 	else
 		info "Skipping YubiKey prompts (--yes)"
 	fi
