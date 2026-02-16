@@ -87,6 +87,7 @@ cask "font-iosevka-term-nerd-font"  # IosevkaTerm NFM for terminal
 
 # Terminal & Development
 cask "ghostty@tip"       # Nightly with auto-updates
+cask "kitlangton-hex"    # Hex editor
 cask "visual-studio-code" # Code editor
 cask "sublime-text"      # Text editor
 
