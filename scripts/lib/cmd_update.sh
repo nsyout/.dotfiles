@@ -157,6 +157,10 @@ EOF
 		fi
 
 		info "Updating Homebrew..."
+		if brew tap | grep -qx 'homebrew/cask-fonts'; then
+			warn "Removing deprecated tap: homebrew/cask-fonts"
+			brew untap homebrew/cask-fonts || warn "Failed to untap homebrew/cask-fonts"
+		fi
 		brew update || warn "Failed to update Homebrew"
 
 		info "Upgrading installed packages..."

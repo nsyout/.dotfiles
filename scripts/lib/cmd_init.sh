@@ -236,7 +236,26 @@ EOF
 
 		if command_exists tmux; then
 			info "Setting up tmux plugin manager..."
-			git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm 2>/dev/null || true
+			local tpm_dir="$HOME/.config/tmux/plugins/tpm"
+			if [[ ! -d "$tpm_dir" ]]; then
+				mkdir -p "$HOME/.config/tmux/plugins"
+				if ! GIT_TERMINAL_PROMPT=0 git clone --depth 1 https://github.com/tmux-plugins/tpm "$tpm_dir" 2>/dev/null; then
+					warn "Git clone for TPM failed; downloading archive instead"
+					local tpm_tmp
+					tpm_tmp="$(mktemp -d)"
+					if curl -fsSL https://codeload.github.com/tmux-plugins/tpm/tar.gz/refs/heads/master -o "$tpm_tmp/tpm.tar.gz"; then
+						tar -xzf "$tpm_tmp/tpm.tar.gz" -C "$tpm_tmp" 2>/dev/null || true
+						if [[ -d "$tpm_tmp/tpm-master" ]]; then
+							mv "$tpm_tmp/tpm-master" "$tpm_dir"
+						else
+							warn "Unable to unpack TPM archive"
+						fi
+					else
+						warn "Unable to download TPM archive"
+					fi
+					rm -rf "$tpm_tmp"
+				fi
+			fi
 		fi
 
 		if command_exists fzf && command_exists brew; then

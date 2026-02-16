@@ -168,7 +168,14 @@ EOF
 		fi
 	else
 		info "Homebrew already installed"
-		brew update
+		if brew tap | grep -qx 'homebrew/cask-fonts'; then
+			warn "Removing deprecated tap: homebrew/cask-fonts"
+			brew untap homebrew/cask-fonts || warn "Failed to untap homebrew/cask-fonts"
+		fi
+		if ! brew update; then
+			warn "brew update failed (often caused by inaccessible/private taps)"
+			warn "Continuing bootstrap; inspect taps with: brew tap"
+		fi
 	fi
 
 	info "Disabling Homebrew analytics..."
