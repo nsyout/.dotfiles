@@ -65,7 +65,7 @@ dotfiles/
 #### Fresh Personal Machine
 
 ```bash
-git clone https://github.com/nsyout/sys-forbidden.git ~/.dotfiles
+git clone https://github.com/nsyout/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./dot profile set personal
 ./dot bootstrap --profile personal
@@ -83,7 +83,7 @@ dot doctor --profile personal
 #### Fresh Work Machine
 
 ```bash
-git clone https://github.com/nsyout/sys-forbidden.git ~/.dotfiles
+git clone https://github.com/nsyout/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./dot profile set work
 ./dot bootstrap --profile work
@@ -108,7 +108,7 @@ Work profile notes:
 For a brand new macOS installation:
 
 ```bash
-git clone https://github.com/nsyout/sys-forbidden.git ~/.dotfiles
+git clone https://github.com/nsyout/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./dot bootstrap
 ```
@@ -128,7 +128,7 @@ Bootstrap will prompt you to run full setup at the end, or you can run `./dot in
 ### Existing System
 
 ```bash
-git clone https://github.com/nsyout/sys-forbidden.git ~/.dotfiles
+git clone https://github.com/nsyout/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./dot init
 ```
@@ -696,7 +696,7 @@ If you prefer manual installation:
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install stow
-git clone https://github.com/nsyout/sys-forbidden.git ~/.dotfiles
+git clone https://github.com/nsyout/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 stow --restow .
 dot packages sync

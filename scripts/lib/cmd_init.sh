@@ -132,22 +132,41 @@ EOF
 			return 0
 		fi
 
+		add_dock_app_if_present() {
+			local app_path="$1"
+			[[ -d "$app_path" ]] && dockutil --add "$app_path" --no-restart
+		}
+
 		info "Setting up Dock with preferred apps..."
 		dockutil --remove all --no-restart
 
 		dockutil --add "/System/Applications/System Settings.app" --no-restart
-		dockutil --add "/System/Applications/Calendar.app" --no-restart
-		dockutil --add "/System/Applications/Messages.app" --no-restart
-		[[ -d "/Applications/Slack.app" ]] && dockutil --add "/Applications/Slack.app" --no-restart
-		dockutil --add "/System/Applications/Mail.app" --no-restart
-		[[ -d "/Applications/Spotify.app" ]] && dockutil --add "/Applications/Spotify.app" --no-restart
-		[[ -d "/Applications/Ghostty.app" ]] && dockutil --add "/Applications/Ghostty.app" --no-restart
-		[[ -d "/Applications/Firefox.app" ]] && dockutil --add "/Applications/Firefox.app" --no-restart
-		[[ -d "/Applications/Obsidian.app" ]] && dockutil --add "/Applications/Obsidian.app" --no-restart
-		[[ -d "/Applications/Drafts.app" ]] && dockutil --add "/Applications/Drafts.app" --no-restart
 
-		dockutil --add /Applications --view grid --display folder --sort name --no-restart
+		if [[ "$profile" == "work" ]]; then
+			add_dock_app_if_present "/Applications/Spotify.app"
+			add_dock_app_if_present "/Applications/Ghostty.app"
+			add_dock_app_if_present "/Applications/Microsoft Outlook.app"
+			add_dock_app_if_present "/Applications/Slack.app"
+			add_dock_app_if_present "/Applications/Firefox.app"
+			add_dock_app_if_present "/Applications/Obsidian.app"
+			add_dock_app_if_present "/Applications/Sublime Text.app"
+			add_dock_app_if_present "/Applications/Linear.app"
+		else
+			dockutil --add "/System/Applications/Calendar.app" --no-restart
+			dockutil --add "/System/Applications/Messages.app" --no-restart
+			dockutil --add "/System/Applications/Mail.app" --no-restart
+			add_dock_app_if_present "/Applications/Slack.app"
+			add_dock_app_if_present "/Applications/Ghostty.app"
+			add_dock_app_if_present "/Applications/Firefox.app"
+			if [[ "$profile" == "personal" ]]; then
+				add_dock_app_if_present "/Applications/Spotify.app"
+				add_dock_app_if_present "/Applications/Obsidian.app"
+				add_dock_app_if_present "/Applications/Drafts.app"
+			fi
+		fi
+
 		dockutil --add ~/Downloads --view fan --display stack --sort dateadded --no-restart
+		dockutil --add /Applications --view grid --display folder --sort name --no-restart
 
 		killall Dock
 		info "Dock configured"
