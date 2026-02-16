@@ -37,6 +37,7 @@ dot_stow_profile_packages() {
 
 dot_stow_apply() {
 	local profile="$1"
+	local assume_yes="${2:-false}"
 	local dotfiles_dir="${DOTFILES_DIR:-$HOME/.dotfiles}"
 
 	if ! command_exists stow; then
@@ -55,11 +56,16 @@ dot_stow_apply() {
 
 	if ! stow --target="$HOME" --no-folding --ignore='^\.config' -v . 2>/dev/null; then
 		warn "Conflicts detected in root-level configs"
-		read -r -p "Override existing root-level files? (y/N): " choice
-		if [[ "$choice" =~ ^[Yy]$ ]]; then
+		if [[ "$assume_yes" == "true" ]]; then
+			info "Auto-overriding root-level files (--yes)"
 			stow --target="$HOME" --no-folding --ignore='^\.config' --override='.*' -v . || warn "Failed to deploy some root-level configs"
 		else
-			warn "Skipping root-level config deployment"
+			read -r -p "Override existing root-level files? (y/N): " choice
+			if [[ "$choice" =~ ^[Yy]$ ]]; then
+				stow --target="$HOME" --no-folding --ignore='^\.config' --override='.*' -v . || warn "Failed to deploy some root-level configs"
+			else
+				warn "Skipping root-level config deployment"
+			fi
 		fi
 	fi
 
@@ -89,10 +95,14 @@ dot_stow_apply() {
 
 		if [[ -e "$target_path" || -L "$target_path" ]]; then
 			warn "  Conflicts detected for $package"
-			read -r -p "  Override existing $package files? (y/N): " choice
-			if [[ ! "$choice" =~ ^[Yy]$ ]]; then
-				warn "  ✗ Skipping $package"
-				continue
+			if [[ "$assume_yes" != "true" ]]; then
+				read -r -p "  Override existing $package files? (y/N): " choice
+				if [[ ! "$choice" =~ ^[Yy]$ ]]; then
+					warn "  ✗ Skipping $package"
+					continue
+				fi
+			else
+				info "  Auto-overriding $package (--yes)"
 			fi
 			command rm -rf "$target_path"
 		fi

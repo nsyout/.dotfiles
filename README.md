@@ -73,9 +73,10 @@ cd ~/.dotfiles
 
 After bootstrap completes:
 
+- `dot bootstrap` can run `dot init` for you at the end.
+- `dot init` already includes stow + package sync.
+
 ```bash
-dot stow --profile personal
-dot packages sync --profile personal
 dot ssh configure --profile personal --yes
 dot doctor --profile personal
 ```
@@ -91,9 +92,10 @@ cd ~/.dotfiles
 
 After bootstrap completes:
 
+- `dot bootstrap` can run `dot init` for you at the end.
+- `dot init` already includes stow + package sync.
+
 ```bash
-dot stow --profile work
-dot packages sync --profile work
 dot ssh configure --profile work --yes
 dot doctor --profile work
 ```

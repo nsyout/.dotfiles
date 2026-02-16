@@ -419,7 +419,7 @@ EOF
 
 	install_dependencies
 	backup_configs
-	dot_stow_apply "$profile"
+	dot_stow_apply "$profile" "$assume_yes"
 	dot_packages_sync "$profile"
 	configure_dock
 	install_fonts
