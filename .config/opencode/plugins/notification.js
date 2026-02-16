@@ -4,7 +4,7 @@ import { join } from "path";
 export const NotificationPlugin = async ({ $, client }) => {
   const soundPath = join(
     homedir(),
-    ".config/opencode/sounds/arc_raiders_arc_probe_phone_3a.aiff",
+    ".dotfiles/sounds/schlock_2_phone_3a.aiff",
   );
   let isPlaying = false;
 
