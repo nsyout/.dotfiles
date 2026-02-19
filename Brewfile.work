@@ -6,3 +6,4 @@ brew "docker"            # Docker CLI
 
 # Work communication
 cask "slack"             # Team communication
+cask "kitlangton-hex"    # Voice transcription

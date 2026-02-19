@@ -32,7 +32,7 @@ cask "claude-code"       # Claude Code CLI
 cask "carbon-copy-cloner" # Backup software
 cask "vlc"               # Media player
 cask "discord"           # Communication platform
-cask "macwhisper"        # AI transcription
+cask "kitlangton-hex"    # Voice transcription
 
 # App Store Applications
 mas "Reeder Classic", id: 1529448980  # RSS reader
