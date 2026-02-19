@@ -160,6 +160,7 @@ EOF
 
 	local launchd_src="$HOME/.config/resticprofile/launchd"
 	local launchd_dst="$HOME/Library/LaunchAgents"
+	local launchd_tmp
 
 	if [[ ! -d "$launchd_src" ]]; then
 		warn "Launchd directory not found: $launchd_src"
@@ -168,6 +169,8 @@ EOF
 	fi
 
 	mkdir -p "$launchd_dst"
+	launchd_tmp="$(mktemp -d)"
+	trap 'rm -rf "$launchd_tmp"' RETURN
 
 	local plist
 	for plist in "$launchd_src"/*.plist; do
@@ -177,7 +180,8 @@ EOF
 		label="${plist_name%.plist}"
 
 		launchctl unload "$launchd_dst/$plist_name" 2>/dev/null || true
-		cp "$plist" "$launchd_dst/$plist_name"
+		sed "s|__HOME__|$HOME|g" "$plist" >"$launchd_tmp/$plist_name"
+		cp "$launchd_tmp/$plist_name" "$launchd_dst/$plist_name"
 		launchctl load "$launchd_dst/$plist_name"
 		info "Installed schedule: $label"
 	done

@@ -1,7 +1,6 @@
 ---
 description: Multi-repository codebase expert for understanding library internals and remote code. Invoke when exploring GitHub/npm/PyPI/crates repositories, tracing code flow through unfamiliar libraries, comparing implementations, or searching current docs/discussions. Show its response in full — do not summarize.
 mode: subagent
-model: gpt-5.3-codex
 permission:
   "*": allow
   edit: deny

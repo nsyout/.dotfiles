@@ -23,7 +23,7 @@ initialize = false
 
 # Backup configuration
 [s3.backup]
-source = ["/Users/readerr"]
+source = ["."]
 exclude = [
     # System junk
     ".Trash",
@@ -31,7 +31,7 @@ exclude = [
     ".DS_Store",
 
     # Large downloads
-    "/Users/readerr/Downloads/*.dmg",
+    "Downloads/*.dmg",
 
     # Development artifacts
     "node_modules",
@@ -105,8 +105,8 @@ exclude = [
 
     # Applications (reinstallable)
     "/Applications",
-    "/Users/readerr/Applications",
-    "/Users/readerr/Library/Application Support/Steam",
+    "Applications",
+    "Library/Application Support/Steam",
 ]
 # Schedule managed by launchd plist (see ~/.config/resticprofile/launchd/)
 # Run: launchctl load ~/.config/resticprofile/launchd/*.plist

@@ -6,7 +6,7 @@
     <string>com.resticprofile.prune</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/readerr/.config/resticprofile/backup</string>
+        <string>__HOME__/.config/resticprofile/backup</string>
         <string>prune</string>
     </array>
     <key>StartCalendarInterval</key>
@@ -19,9 +19,9 @@
         <integer>30</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/readerr/.local/share/resticprofile/prune.log</string>
+    <string>__HOME__/.local/share/resticprofile/prune.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/readerr/.local/share/resticprofile/prune.log</string>
+    <string>__HOME__/.local/share/resticprofile/prune.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>

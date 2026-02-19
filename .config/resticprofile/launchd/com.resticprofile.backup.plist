@@ -6,7 +6,7 @@
     <string>com.resticprofile.backup</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/readerr/.config/resticprofile/backup</string>
+        <string>__HOME__/.config/resticprofile/backup</string>
         <string>backup</string>
     </array>
     <key>StartCalendarInterval</key>
@@ -17,9 +17,9 @@
         <integer>0</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/readerr/.local/share/resticprofile/backup.log</string>
+    <string>__HOME__/.local/share/resticprofile/backup.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/readerr/.local/share/resticprofile/backup.log</string>
+    <string>__HOME__/.local/share/resticprofile/backup.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>

@@ -336,7 +336,7 @@ restic-backup restore latest --target /tmp/restore
 - Logs: `~/.local/share/resticprofile/backup.log`
 - Lock file: `~/.local/share/resticprofile/backup.lock`
 
-Backup includes `/Users/readerr` with exclusions for caches, build artifacts, and reinstallable applications.
+Backup includes your home directory with exclusions for caches, build artifacts, and reinstallable applications.
 
 The lock file prevents concurrent backup runs. If a scheduled backup fires while a manual backup is running, it exits gracefully. Stale locks (from crashes or reboots) are automatically cleaned up by verifying the PID is still a running backup process.
 

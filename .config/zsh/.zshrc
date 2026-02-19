@@ -24,4 +24,4 @@ else
     echo "Warning: ~/.zshrc.d directory not found" >&2
 fi
 # Created by `pipx` on 2025-09-17 04:30:12
-export PATH="$PATH:/Users/readerr/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
