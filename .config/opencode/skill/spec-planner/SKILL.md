@@ -220,4 +220,4 @@ When scope creeps:
 | Agent | When to Invoke |
 |-------|----------------|
 | **Librarian** | Research unfamiliar tech, APIs, frameworks |
-| **Oracle** | Deep architectural analysis, complex debugging |
+| **Oracle** | Deep architectural analysis, complex debugging (fallback: `general` if unavailable) |

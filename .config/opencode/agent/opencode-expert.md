@@ -94,7 +94,7 @@ Configs are merged together - project config overrides global config for conflic
 ```json
 {
   "$schema": "opencode.ai/config.json",
-  "model": "anthropic/claude-sonnet-4-20250514"
+  "model": "openai/gpt-5.3-codex"
 }
 ```
 

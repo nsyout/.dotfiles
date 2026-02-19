@@ -99,11 +99,13 @@ Examples of good acceptance criteria:
 - "Done when: Component renders without console errors"
 - "Done when: Type check passes (`tsc --noEmit`)"
 
-## Step 6: Oracle Review
+## Step 6: Review Subagent Check
 
 Before creating tasks, invoke Oracle to review the proposed breakdown.
 
-**Prompt Oracle with:**
+If Oracle fails with provider/model errors (for example `ProviderModelNotFoundError`), immediately fall back to a `general` subagent with the same prompt and proceed.
+
+**Prompt the review subagent with:**
 
 ```
 Review this task breakdown for "<milestone>":
@@ -120,7 +122,7 @@ Check:
 - Any tasks that should be split or merged?
 ```
 
-Incorporate Oracle's feedback, then proceed to create tasks.
+Incorporate review feedback, then proceed to create tasks.
 
 ## Step 7: Create Subtasks (If Breaking Down)
 

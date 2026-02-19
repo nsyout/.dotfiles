@@ -68,7 +68,7 @@ Every milestone must:
 ## Review Workflow
 
 1. Analyze document → propose breakdown
-2. **Invoke Oracle** to review breakdown and suggest improvements
+2. **Invoke Oracle** to review breakdown and suggest improvements (fallback to `general` reviewer if Oracle is unavailable)
 3. Incorporate feedback
 4. Create in Overseer (persists to SQLite via MCP)
 
