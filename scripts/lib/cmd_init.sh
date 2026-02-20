@@ -210,10 +210,8 @@ EOF
 			return 0
 		fi
 
-		git config --global user.name "$git_name"
 		read -r -p "Git email: " git_email
-		[[ -n "$git_email" ]] && git config --global user.email "$git_email"
-		git config --global init.defaultBranch main
+		dot_git_setup --name "$git_name" --email "$git_email" --default-branch main --yes
 		info "Git configured"
 	}
 

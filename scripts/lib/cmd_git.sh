@@ -1,5 +1,53 @@
 #!/usr/bin/env bash
 
+dot_git_shim_path() {
+	printf "%s\n" "$HOME/.gitconfig"
+}
+
+dot_git_managed_config_path() {
+	printf "%s\n" "$HOME/.config/git/config"
+}
+
+dot_git_local_config_path() {
+	printf "%s\n" "$HOME/.config-local/git/user"
+}
+
+dot_git_ensure_shim() {
+	local shim_path managed_path local_path
+	shim_path="$(dot_git_shim_path)"
+	managed_path="$(dot_git_managed_config_path)"
+	local_path="$(dot_git_local_config_path)"
+
+	mkdir -p "$(dirname "$local_path")"
+
+	local desired_content current_content
+	desired_content="$(
+		cat <<EOF
+[include]
+	path = $managed_path
+[include]
+	path = $local_path
+EOF
+	)"
+
+	if [[ -f "$shim_path" ]]; then
+		current_content="$(cat "$shim_path")"
+		if [[ "$current_content" != "$desired_content" ]]; then
+			local backup_path
+			backup_path="$shim_path.backup.$(date +%s)"
+			cp "$shim_path" "$backup_path"
+			warn "Backed up existing ~/.gitconfig to $backup_path"
+		fi
+	fi
+
+	cat >"$shim_path" <<EOF
+[include]
+	path = $managed_path
+[include]
+	path = $local_path
+EOF
+}
+
 dot_git_setup() {
 	local git_name=""
 	local git_email=""
@@ -64,12 +112,17 @@ EOF
 		return 1
 	fi
 
+	dot_git_ensure_shim
+
+	local local_git_config
+	local_git_config="$(dot_git_local_config_path)"
+
 	if [[ -z "$git_name" && "$assume_yes" != "true" ]]; then
 		read -r -p "Git user name (leave blank to skip): " git_name
 	fi
 
 	if [[ -n "$git_name" ]]; then
-		git config --global user.name "$git_name"
+		git config --file "$local_git_config" user.name "$git_name"
 		info "Set git user.name"
 	else
 		info "Skipped git user.name"
@@ -80,47 +133,37 @@ EOF
 	fi
 
 	if [[ -n "$git_email" ]]; then
-		git config --global user.email "$git_email"
+		git config --file "$local_git_config" user.email "$git_email"
 		info "Set git user.email"
 	else
 		info "Skipped git user.email"
 	fi
 
-	git config --global init.defaultBranch "$default_branch"
+	git config --file "$local_git_config" init.defaultBranch "$default_branch"
 	info "Set git init.defaultBranch to '$default_branch'"
 
 	local ignore_file="$HOME/.config/git/ignore"
 	if [[ -f "$ignore_file" ]]; then
-		git config --global core.excludesfile "$ignore_file"
+		git config --file "$local_git_config" core.excludesfile "$ignore_file"
 		info "Set git core.excludesfile to '$ignore_file'"
-	fi
-
-	local managed_git_config="$HOME/.config/git/config"
-	if [[ -f "$managed_git_config" ]]; then
-		if ! git config --global --get-all include.path | grep -Fxq "$managed_git_config"; then
-			git config --global --add include.path "$managed_git_config"
-			info "Added git include.path '$managed_git_config'"
-		else
-			info "git include.path already contains '$managed_git_config'"
-		fi
 	fi
 
 	if [[ "$enable_signing" == "true" ]]; then
 		if [[ -z "$signing_key" ]]; then
 			signing_key="$HOME/.ssh/personal_primary.pub"
 		fi
-		git config --global gpg.format ssh
-		git config --global user.signingKey "$signing_key"
-		git config --global commit.gpgSign true
-		git config --global tag.gpgSign true
+		git config --file "$local_git_config" gpg.format ssh
+		git config --file "$local_git_config" user.signingKey "$signing_key"
+		git config --file "$local_git_config" commit.gpgSign true
+		git config --file "$local_git_config" tag.gpgSign true
 		info "Enabled SSH commit/tag signing with '$signing_key'"
 	elif [[ "$enable_signing" == "false" ]]; then
-		git config --global --unset-all commit.gpgSign >/dev/null 2>&1 || true
-		git config --global --unset-all tag.gpgSign >/dev/null 2>&1 || true
+		git config --file "$local_git_config" --unset-all commit.gpgSign >/dev/null 2>&1 || true
+		git config --file "$local_git_config" --unset-all tag.gpgSign >/dev/null 2>&1 || true
 		info "Disabled enforced commit/tag signing"
 	elif [[ -n "$signing_key" ]]; then
-		git config --global gpg.format ssh
-		git config --global user.signingKey "$signing_key"
+		git config --file "$local_git_config" gpg.format ssh
+		git config --file "$local_git_config" user.signingKey "$signing_key"
 		info "Set SSH signing key to '$signing_key'"
 	fi
 
@@ -133,6 +176,10 @@ dot_git_status() {
 		error "git not found"
 		return 1
 	fi
+
+	printf "global shim: %s\n" "$(dot_git_shim_path)"
+	printf "managed config: %s\n" "$(dot_git_managed_config_path)"
+	printf "local config: %s\n" "$(dot_git_local_config_path)"
 
 	local name email branch excludes include_paths signing_key gpg_format commit_sign tag_sign
 	name="$(git config --global --get user.name || true)"
@@ -166,16 +213,21 @@ dot_git_signing_status() {
 
 dot_git_signing_enable() {
 	local key_path="${1:-$HOME/.ssh/personal_primary.pub}"
-	git config --global gpg.format ssh
-	git config --global user.signingKey "$key_path"
-	git config --global commit.gpgSign true
-	git config --global tag.gpgSign true
+	dot_git_ensure_shim
+	local local_git_config
+	local_git_config="$(dot_git_local_config_path)"
+	git config --file "$local_git_config" gpg.format ssh
+	git config --file "$local_git_config" user.signingKey "$key_path"
+	git config --file "$local_git_config" commit.gpgSign true
+	git config --file "$local_git_config" tag.gpgSign true
 	info "Enabled SSH commit/tag signing with '$key_path'"
 }
 
 dot_git_signing_disable() {
-	git config --global --unset-all commit.gpgSign >/dev/null 2>&1 || true
-	git config --global --unset-all tag.gpgSign >/dev/null 2>&1 || true
+	local local_git_config
+	local_git_config="$(dot_git_local_config_path)"
+	git config --file "$local_git_config" --unset-all commit.gpgSign >/dev/null 2>&1 || true
+	git config --file "$local_git_config" --unset-all tag.gpgSign >/dev/null 2>&1 || true
 	info "Disabled enforced commit/tag signing"
 }
 
@@ -198,8 +250,11 @@ dot_cmd_git_signing() {
 			error "Usage: dot git signing key <public-key-path>"
 			return 1
 		fi
-		git config --global gpg.format ssh
-		git config --global user.signingKey "$1"
+		dot_git_ensure_shim
+		local local_git_config
+		local_git_config="$(dot_git_local_config_path)"
+		git config --file "$local_git_config" gpg.format ssh
+		git config --file "$local_git_config" user.signingKey "$1"
 		info "Set SSH signing key to '$1'"
 		;;
 	-h | --help | help)
