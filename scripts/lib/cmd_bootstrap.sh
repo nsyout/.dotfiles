@@ -132,10 +132,9 @@ EOF
 
 	step "Creating standard directories"
 	mkdir -p "$HOME/Developer"
-	mkdir -p "$HOME/projects/repos"
-	mkdir -p "$HOME/projects/forks"
-	mkdir -p "$HOME/projects/playground"
-	mkdir -p "$HOME/projects/fonts"
+	mkdir -p "$HOME/projects/personal"
+	mkdir -p "$HOME/projects/work"
+	mkdir -p "$HOME/projects/external"
 	mkdir -p "$HOME/.config"
 	mkdir -p "$HOME/.local/bin"
 	mkdir -p "$HOME/.local/share"

@@ -35,9 +35,9 @@ alias path='echo -e ${PATH//:/\\n}'
 
 # Personal project directories
 [ -d ~/projects ]             && alias pj='cd ~/projects'
-[ -d ~/projects/forks ]       && alias pjf='cd ~/projects/forks'
-[ -d ~/projects/playground ]  && alias pjp='cd ~/projects/playground'
-[ -d ~/projects/repos ]       && alias pjr='cd ~/projects/repos'
+[ -d ~/projects/personal ]    && alias pjp='cd ~/projects/personal'
+[ -d ~/projects/work ]        && alias pjw='cd ~/projects/work'
+[ -d ~/projects/external ]    && alias pje='cd ~/projects/external'
 
 # Directory stack shortcuts
 alias d='dirs -v'
@@ -57,13 +57,15 @@ if _exists eza; then
   alias ls >/dev/null 2>&1 && unalias ls
   alias ls='eza'
   alias lt='eza --tree'
-  alias l='eza -la --git'
+  alias l='ls'
+  alias ll='eza -la --git'
   alias lt1='eza --tree --level=1'
   alias lt2='eza --tree --level=2'
   alias lt3='eza --tree --level=3'
 else
   alias ls='ls -G'  # macOS color flag
-  alias l='ls -laG'
+  alias l='ls'
+  alias ll='ls -laG'
 fi
 
 # Smart trash management (macOS)

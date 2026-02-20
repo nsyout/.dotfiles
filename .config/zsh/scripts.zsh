@@ -6,7 +6,7 @@
 
 # Main entry point: nsy [create|publish]
 nsy() {
-    local HUGO_DIR="${NSY_HUGO_DIR:-$HOME/projects/repos/noisyoutput.com}"
+    local HUGO_DIR="${NSY_HUGO_DIR:-$HOME/projects/personal/noisyoutput.com}"
 
     if [[ ! -d "$HUGO_DIR" ]]; then
         echo "Error: Hugo directory not found: $HUGO_DIR"
@@ -579,4 +579,3 @@ trash-status() {
         echo "trash-list command not found"
     fi
 }
-

@@ -248,7 +248,7 @@ nsy pub          # Shorthand
 Set `NSY_HUGO_DIR` to override the default Hugo directory:
 
 ```bash
-export NSY_HUGO_DIR="$HOME/projects/repos/noisyoutput.com"
+export NSY_HUGO_DIR="$HOME/projects/personal/noisyoutput.com"
 ```
 
 ## Firefox Configuration
@@ -404,8 +404,8 @@ These are installed automatically if you're signed into the App Store.
 **Key aliases**:
 
 - `dotf` for jumping to `~/.dotfiles`
-- Project and directory navigation (`pj`, `pjf`, `pjp`, `pjr`, `dl`, `dt`)
-- Listing defaults with `eza` (`l`, `lt`, `lt1`, `lt2`, `lt3`)
+- Project and directory navigation (`pj`, `pjp`, `pjw`, `pje`, `dl`, `dt`)
+- Listing defaults with `eza` (`l`, `ll`, `lt`, `lt1`, `lt2`, `lt3`)
 - Explicit disk usage helper (`diskusage`)
 - Safe trash function (macOS Finder integration via `trash`)
 

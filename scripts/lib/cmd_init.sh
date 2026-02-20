@@ -280,7 +280,7 @@ EOF
 
 		step "Installing personal fonts"
 		local fonts_repo="git@github.com:nsyout/system-fonts.git"
-		local fonts_dir="$HOME/projects/repos/system-fonts"
+		local fonts_dir="$HOME/projects/personal/system-fonts"
 
 		if [[ -d "$fonts_dir" ]]; then
 			info "Updating fonts repository..."
