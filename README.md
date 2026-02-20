@@ -153,7 +153,10 @@ The setup command will:
 1. Install Homebrew if not present
 2. Install required tools (git, stow, starship, etc.)
 3. Clean up broken symlinks
-4. Deploy configurations using GNU Stow (with smart conflict handling)
+4. Deploy configurations with profile-aware linking
+   - Root-level links are intentionally minimal (`~/.zshenv`)
+   - CLI entrypoint is linked at `~/.local/bin/dot`
+   - `.config` is linked per package from stow manifests
    - Detects conflicting files automatically
    - Offers to backup and replace, skip, or abort
    - Preserves directory structure in backups

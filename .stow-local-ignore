@@ -3,6 +3,7 @@
 
 # Version control
 \.git
+\.jj
 \.gitignore
 \.gitmodules
 
@@ -16,6 +17,10 @@ CHANGELOG.*
 TODO.*
 CLAUDE\.md
 \.md$
+
+# Repo-local lint config (do not link into $HOME)
+^\.markdownlint-cli2\.jsonc$
+^\.semgrepignore$
 
 # macOS
 \.DS_Store
@@ -32,10 +37,17 @@ CLAUDE\.md
 ^scripts/
 ^packages$
 ^packages/
-^Brewfile$
+^Brewfile(\..*)?$
+^stow-manifest(\..*)?$
 ^Makefile$
 ^install
 ^bootstrap
+
+# Repository-only docs/metadata
+^AGENTS\.md$
+^PLAN\.md$
+^sounds$
+^sounds/
 
 # Firefox config (used by setup script, not symlinked)
 \.config/firefox
