@@ -110,6 +110,8 @@ alias get="curl -O -L"
 # Development Tools
 # ------------------------------------------------------------------------------
 
+alias oc='opencode .'
+
 # Check git status across subdirectories (usage: repostatus [dir])
 repostatus() {
   local base_dir="${1:-.}"
