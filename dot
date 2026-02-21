@@ -53,10 +53,11 @@ Usage:
   dot <command> [subcommand] [options]
 
 Core workflow:
-  dot bootstrap                    Fresh macOS machine setup
-  dot init                         Install/configure dotfiles on current machine
-  dot update                       Update repo, links, packages, and optional integrations
-  dot doctor                       Run health checks
+  dot bootstrap [--profile <base|personal|work>] [--yes] [--dry-run]
+  dot init [--profile <base|personal|work>] [--yes] [--dry-run]
+           [--no-firefox] [--no-fonts] [--no-dock] [--no-git]
+  dot update [--profile <base|personal|work>] [--dry-run]
+  dot doctor [--profile <base|personal|work>]
 
 Profile:
   dot profile set <base|personal|work>
@@ -72,11 +73,17 @@ Packages:
   dot retry-failed [--profile ...] [--dry-run]
 
 Integrations:
-  dot git <setup|status|signing>
-  dot ssh <configure|sync-yubikey-keys|status>
+  dot git setup [--name <name>] [--email <email>] [--default-branch <branch>]
+                [--signing-key <public-key-path>] [--enable-signing|--disable-signing] [--yes]
+  dot git status
+  dot git signing <status|enable [key-path]|disable|key <path>>
+  dot ssh configure [--profile <base|personal|work>] [--dry-run] [--yes]
+  dot ssh sync-yubikey-keys --slot <primary|backup> [--dry-run] [--yes]
+  dot ssh status
   dot firefox sync [--dry-run] [--yes]
-  dot restic <setup|status>
-  dot wallpaper set [path]
+  dot restic setup [--machine <sys-ms|sys-mbp>] [--yes]
+  dot restic status
+  dot wallpaper set [path] [--dry-run]
 
 Utility:
   dot link                         Link dot into ~/.local/bin
@@ -87,6 +94,7 @@ Utility:
                                    Run local security checks
   dot sast [--strict]              Run local SAST checks
   dot help [command]               Show command help
+  dot -h | --help                  Show this help
 
 Examples:
   dot profile set personal

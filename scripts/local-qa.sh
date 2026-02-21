@@ -60,6 +60,7 @@ section "BLOCKING CHECKS"
 run_blocking "shellcheck" shellcheck dot scripts/lib/*.sh scripts/*.sh scripts/pre-commit
 run_blocking "bash syntax" bash -n dot scripts/lib/*.sh scripts/*.sh scripts/pre-commit
 run_blocking "zsh syntax" zsh -n .config/zsh/.zshrc .config/zsh/.zshrc.d/*.zsh .config/zsh/*.zsh
+run_blocking "dot help consistency" ./scripts/check-help-consistency.sh
 
 run_blocking "aerospace config syntax" python3 - <<'PY'
 import tomllib

@@ -261,9 +261,9 @@ EOF
 			"$(brew --prefix)/opt/fzf/install" --key-bindings --completion --no-update-rc --no-bash 2>/dev/null || true
 		fi
 
-		if [[ -f "$HOME/.config/wallpapers/yeyo-salas-plane-contrail.jpg" ]]; then
+		if [[ -f "$HOME/.config/wallpapers/plane-wp.png" ]]; then
 			info "Setting desktop wallpaper..."
-			osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$HOME/.config/wallpapers/yeyo-salas-plane-contrail.jpg\"" 2>/dev/null || warn "Failed to set wallpaper"
+			osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$HOME/.config/wallpapers/plane-wp.png\"" 2>/dev/null || warn "Failed to set wallpaper"
 		fi
 	}
 

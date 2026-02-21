@@ -4,7 +4,7 @@ dot_cmd_wallpaper() {
 	local action="${1:-set}"
 	shift || true
 
-	local default_wallpaper="$HOME/.config/wallpapers/yeyo-salas-plane-contrail.jpg"
+	local default_wallpaper="$HOME/.config/wallpapers/plane-wp.png"
 	local wallpaper_path="$default_wallpaper"
 	local dry_run=false
 
