@@ -64,6 +64,10 @@ fi
 # User-local binaries
 export PATH="$HOME/.local/bin:$PATH"
 
+# Overseer runtime paths
+export OVERSEER_HOST_SCRIPT="$HOME/.local/share/overseer/current/host/dist/index.js"
+export OVERSEER_UI_DIST="$HOME/.local/share/overseer/current/ui/dist"
+
 # SSH FIDO2 support - use Homebrew's OpenSSH on macOS
 # System SSH may lack FIDO2 support, Homebrew OpenSSH includes libfido2
 if [[ -f "/opt/homebrew/bin/ssh" ]]; then

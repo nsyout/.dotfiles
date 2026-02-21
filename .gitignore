@@ -28,11 +28,13 @@ Temporary Items
 *.swp
 *.swo
 *.swn
+.undodir/
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 .vim/
+.config/nvim/.undodir/
 
 # Zsh
 *.zwc

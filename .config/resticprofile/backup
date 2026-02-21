@@ -54,6 +54,9 @@ export AWS_ACCESS_KEY_ID=$(security find-generic-password -s "restic-aws-access-
 export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s "restic-aws-secret-key-${MACHINE}" -a "$USER" -w)
 export AWS_DEFAULT_REGION="us-east-2"
 
+# Ensure relative paths in resticprofile resolve to the home directory.
+cd "$HOME"
+
 # Run resticprofile and capture exit code
 # caffeinate -i prevents idle sleep but allows lid-close sleep (safe for laptops in bags)
 set +e
